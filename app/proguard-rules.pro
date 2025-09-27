@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# TensorFlow Lite
+-keep class org.tensorflow.lite.** { *; }
+-keep class org.tensorflow.lite.support.** { *; }
+
+# Camera X
+-keep class androidx.camera.** { *; }
+
+# Keep model classes
+-keep class com.yourpackage.fruitdetection.ml.** { *; }
+-keep class com.yourpackage.fruitdetection.data.model.** { *; }
+
+# Keep native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
