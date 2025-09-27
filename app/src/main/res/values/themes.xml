@@ -3,6 +3,12 @@
     <style name="Base.Theme.TTU" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/fruit_green</item>
+        <item name="colorPrimaryVariant">@color/fruit_green_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/fruit_orange</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/fruit_green</item>
     </style>
 
     <style name="Theme.TTU" parent="Base.Theme.TTU" />
