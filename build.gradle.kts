@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
+    // Applies the Kotlin Compose plugin for Jetpack Compose support
     alias(libs.plugins.kotlin.compose) apply false
 
 }
