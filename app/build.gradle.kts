@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     // Lifecycle runtime Kotlin extensions
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Lifecycle runtime Compose extensions
+    implementation(libs.androidx.lifecycle.runtime.compose)
     // Jetpack Compose integration with activities
     implementation(libs.androidx.activity.compose)
     // Bill of Materials (BOM) for Jetpack Compose, manages versions of Compose libraries
