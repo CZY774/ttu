@@ -2,6 +2,7 @@ package com.czy.ttu.ml
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.image.ImageProcessor
@@ -20,6 +21,7 @@ class FruitClassifier(private val context: Context) {
         private const val MODEL_PATH = "models/fruit_model_quantized.tflite"
         private const val LABELS_PATH = "class_names.json"
         private const val INPUT_SIZE = 224
+        private const val TAG = "FruitClassifier"
     }
 
     init {
@@ -37,7 +39,9 @@ class FruitClassifier(private val context: Context) {
                 setNumThreads(4)
             }
             interpreter = Interpreter(model, options)
+            Log.d(TAG, "Model loaded successfully from $MODEL_PATH")
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to load model from $MODEL_PATH", e)
             e.printStackTrace()
         }
     }
@@ -48,10 +52,14 @@ class FruitClassifier(private val context: Context) {
             // Parse JSON to get class names
             // Assuming class_names.json format: {"class_names": ["apple", "banana", "orange", ...]}
             labels = parseClassNames(jsonString)
+            Log.d(TAG, "Labels loaded successfully: ${labels.size} classes")
+            Log.d(TAG, "Labels: $labels")
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to load labels from $LABELS_PATH", e)
             e.printStackTrace()
             // Fallback labels
             labels = listOf("Apple", "Banana", "Orange", "Grape", "Strawberry")
+            Log.d(TAG, "Using fallback labels: $labels")
         }
     }
 
@@ -68,14 +76,23 @@ class FruitClassifier(private val context: Context) {
         imageProcessor = ImageProcessor.Builder()
             .add(ResizeOp(INPUT_SIZE, INPUT_SIZE, ResizeOp.ResizeMethod.BILINEAR))
             .build()
+        Log.d(TAG, "Image processor setup complete")
     }
 
     fun classifyImage(bitmap: Bitmap): ClassificationResult {
-        if (interpreter == null || labels.isEmpty()) {
-            return ClassificationResult("Unknown", 0.0f)
+        if (interpreter == null) {
+            Log.e(TAG, "Interpreter is null - model not loaded")
+            return ClassificationResult("Model Error", 0.0f)
+        }
+        
+        if (labels.isEmpty()) {
+            Log.e(TAG, "Labels are empty - labels not loaded")
+            return ClassificationResult("Labels Error", 0.0f)
         }
 
         try {
+            Log.d(TAG, "Starting image classification...")
+            
             // Preprocess the image
             var tensorImage = TensorImage.fromBitmap(bitmap)
             tensorImage = imageProcessor!!.process(tensorImage)
@@ -96,11 +113,13 @@ class FruitClassifier(private val context: Context) {
             val confidence = probabilities[maxIndex]
             val fruitName = if (maxIndex < labels.size) labels[maxIndex] else "Unknown"
 
+            Log.d(TAG, "Classification result: $fruitName with confidence $confidence")
             return ClassificationResult(fruitName, confidence)
 
         } catch (e: Exception) {
+            Log.e(TAG, "Error during image classification", e)
             e.printStackTrace()
-            return ClassificationResult("Error", 0.0f)
+            return ClassificationResult("Classification Error", 0.0f)
         }
     }
 
@@ -112,7 +131,12 @@ class FruitClassifier(private val context: Context) {
     }
 
     fun close() {
-        interpreter?.close()
-        interpreter = null
+        try {
+            interpreter?.close()
+            interpreter = null
+            Log.d(TAG, "FruitClassifier closed successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error closing FruitClassifier", e)
+        }
     }
 }
