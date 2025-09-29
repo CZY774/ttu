@@ -1,6 +1,7 @@
 package com.czy.ttu.camera
 
 import android.content.Context
+import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -21,6 +22,10 @@ class CameraManager(
     private var camera: Camera? = null
     private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
+    companion object {
+        private const val TAG = "CameraManager"
+    }
+
     fun startCamera(
         previewView: PreviewView,
         lifecycleOwner: LifecycleOwner,
@@ -31,30 +36,30 @@ class CameraManager(
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
         cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
+            try {
+                cameraProvider = cameraProviderFuture.get()
 
-            preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
-            }
-
-            imageAnalyzer = ImageAnalysis.Builder()
-                // setTargetResolution is deprecated. CameraX will now choose an optimal resolution.
-                // Ensure your ImageAnalyzer (com.czy.ttu.camera.ImageAnalyzer)
-                // handles any necessary resizing/cropping to 224x224 for the FruitClassifier.
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, ImageAnalyzer(fruitClassifier, onDetection))
+                preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
-            val cameraSelector = if (isFrontCamera) {
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            } else {
-                CameraSelector.DEFAULT_BACK_CAMERA
-            }
+                imageAnalyzer = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also {
+                        it.setAnalyzer(cameraExecutor, ImageAnalyzer(fruitClassifier, onDetection))
+                    }
 
-            try {
+                val cameraSelector = if (isFrontCamera) {
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                } else {
+                    CameraSelector.DEFAULT_BACK_CAMERA
+                }
+
+                // Unbind use cases before rebinding
                 cameraProvider?.unbindAll()
+
+                // Bind use cases to camera
                 camera = cameraProvider?.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
@@ -67,15 +72,25 @@ class CameraManager(
                     camera?.cameraControl?.enableTorch(isFlashOn)
                 }
 
+                Log.d(TAG, "Camera started successfully")
+
             } catch (exc: Exception) {
-                // Handle exception
+                Log.e(TAG, "Camera initialization failed", exc)
+                exc.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(context))
     }
 
     fun toggleFlash(isOn: Boolean) {
-        if (camera?.cameraInfo?.hasFlashUnit() == true) {
-            camera?.cameraControl?.enableTorch(isOn)
+        try {
+            if (camera?.cameraInfo?.hasFlashUnit() == true) {
+                camera?.cameraControl?.enableTorch(isOn)
+                Log.d(TAG, "Flash toggled: $isOn")
+            } else {
+                Log.w(TAG, "Flash not available on this device")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to toggle flash", e)
         }
     }
 
@@ -90,6 +105,12 @@ class CameraManager(
     }
 
     fun shutdown() {
-        cameraExecutor.shutdown()
+        try {
+            cameraExecutor.shutdown()
+            cameraProvider?.unbindAll()
+            Log.d(TAG, "Camera shutdown successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error during camera shutdown", e)
+        }
     }
 }
