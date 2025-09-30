@@ -20,6 +20,7 @@ fun CameraPreview(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
     isFrontCamera: Boolean,
+    triggerCapture: Int = 0,
     onDetection: (String, Float) -> Unit
 ) {
     CameraPermission(
@@ -28,6 +29,7 @@ fun CameraPreview(
                 modifier = modifier,
                 isFlashOn = isFlashOn,
                 isFrontCamera = isFrontCamera,
+                triggerCapture = triggerCapture,
                 onDetection = onDetection
             )
         },
@@ -42,6 +44,7 @@ internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
     isFrontCamera: Boolean,
+    triggerCapture: Int = 0,
     onDetection: (String, Float) -> Unit
 ) {
     val context = LocalContext.current
@@ -64,6 +67,13 @@ internal fun CameraPreviewContent(
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     var previousFlashState by remember { mutableStateOf(isFlashOn) }
     var previousCameraState by remember { mutableStateOf(isFrontCamera) }
+
+    // Handle capture trigger
+    LaunchedEffect(triggerCapture) {
+        if (triggerCapture > 0) {
+            cameraManager?.captureAndAnalyze()
+        }
+    }
 
     // Handle flash toggle
     LaunchedEffect(isFlashOn) {
