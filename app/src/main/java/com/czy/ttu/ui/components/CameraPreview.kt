@@ -12,7 +12,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.czy.ttu.camera.CameraManager
 import com.czy.ttu.camera.CameraPermission
 import com.czy.ttu.ml.FruitClassifier
-import com.czy.ttu.ui.components.PermissionDeniedScreen
 
 @Composable
 fun CameraPreview(
@@ -48,10 +47,31 @@ internal fun CameraPreviewContent(
 
     val fruitClassifier = remember { FruitClassifier(context) }
     val cameraManager = remember { CameraManager(context, fruitClassifier) }
+    
+    var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    var previousFlashState by remember { mutableStateOf(isFlashOn) }
+    var previousCameraState by remember { mutableStateOf(isFrontCamera) }
 
-    // Update camera settings when flash or camera direction changes
-    LaunchedEffect(isFlashOn, isFrontCamera) {
-        // Camera will be restarted with new settings in AndroidView
+    // Handle flash toggle without restarting camera
+    LaunchedEffect(isFlashOn) {
+        if (previousFlashState != isFlashOn) {
+            cameraManager.toggleFlash(isFlashOn)
+            previousFlashState = isFlashOn
+        }
+    }
+
+    // Handle camera switch
+    LaunchedEffect(isFrontCamera) {
+        if (previousCameraState != isFrontCamera && previewView != null) {
+            cameraManager.switchCamera(
+                previewView = previewView!!,
+                lifecycleOwner = lifecycleOwner,
+                isFrontCamera = isFrontCamera,
+                isFlashOn = isFlashOn,
+                onDetection = onDetection
+            )
+            previousCameraState = isFrontCamera
+        }
     }
 
     DisposableEffect(Unit) {
@@ -71,11 +91,14 @@ internal fun CameraPreviewContent(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
                     scaleType = PreviewView.ScaleType.FILL_CENTER
+                }.also { 
+                    previewView = it
                 }
             },
-            update = { previewView ->
+            update = { preview ->
+                previewView = preview
                 cameraManager.startCamera(
-                    previewView = previewView,
+                    previewView = preview,
                     lifecycleOwner = lifecycleOwner,
                     isFlashOn = isFlashOn,
                     isFrontCamera = isFrontCamera,
