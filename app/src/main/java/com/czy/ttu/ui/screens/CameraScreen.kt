@@ -17,11 +17,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -60,13 +62,14 @@ fun CameraScreen(
     var isFrontCamera by remember { mutableStateOf(false) }
     var detectedFruit by remember { mutableStateOf<String?>(null) }
     var confidence by remember { mutableFloatStateOf(0f) }
+    var isAnalyzing by remember { mutableStateOf(false) }
 
     val fruitRepository = remember { FruitRepository() }
 
-    // Clear detection after 3 seconds
+    // Clear detection after 5 seconds
     LaunchedEffect(detectedFruit) {
         if (detectedFruit != null) {
-            kotlinx.coroutines.delay(3000)
+            kotlinx.coroutines.delay(5000)
             detectedFruit = null
             confidence = 0f
         }
@@ -85,6 +88,7 @@ fun CameraScreen(
             onDetection = { fruit, conf ->
                 detectedFruit = fruit
                 confidence = conf
+                isAnalyzing = false
             }
         )
 
@@ -195,6 +199,44 @@ fun CameraScreen(
             }
         }
 
+        // Capture Button
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(32.dp)
+                .navigationBarsPadding()
+        ) {
+            IconButton(
+                onClick = { 
+                    isAnalyzing = true
+                    // Simulate detection for now
+                    detectedFruit = "Apple"
+                    confidence = 0.85f
+                },
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(
+                        color = if (isAnalyzing) FruitOrange else White,
+                        shape = CircleShape
+                    ),
+                enabled = !isAnalyzing
+            ) {
+                if (isAnalyzing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(40.dp),
+                        color = White
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Camera,
+                        contentDescription = "Capture and Analyze",
+                        tint = Color.Black,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            }
+        }
+
         // Enhanced Detection Result Card
         detectedFruit?.let { fruit ->
             val fruitInfo = fruitRepository.getFruitInfo(fruit)
@@ -202,7 +244,7 @@ fun CameraScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
-                    .navigationBarsPadding(),
+                    .padding(bottom = 120.dp), // Above capture button
                 fruitInfo = fruitInfo,
                 confidence = confidence
             )
