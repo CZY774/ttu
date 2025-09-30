@@ -15,20 +15,22 @@ class ImageAnalyzer(
     private val onDetection: (String, Float) -> Unit
 ) : ImageAnalysis.Analyzer {
 
-    private var lastAnalyzedTimestamp = 0L
-    private val analyzeIntervalMs = 1000L // Analyze every 1 second
+    private var shouldAnalyze = false
+
+    fun triggerAnalysis() {
+        shouldAnalyze = true
+    }
 
     override fun analyze(image: ImageProxy) {
-        val currentTimestamp = System.currentTimeMillis()
-        if (currentTimestamp - lastAnalyzedTimestamp >= analyzeIntervalMs) {
+        if (shouldAnalyze) {
+            shouldAnalyze = false
             val bitmap = imageProxyToBitmap(image)
             bitmap?.let {
                 val result = fruitClassifier.classifyImage(it)
-                if (result.confidence > 0.7f) { // Only show results with >70% confidence
+                if (result.confidence > 0.3f) {
                     onDetection(result.fruitName, result.confidence)
                 }
             }
-            lastAnalyzedTimestamp = currentTimestamp
         }
         image.close()
     }
@@ -44,7 +46,6 @@ class ImageAnalyzer(
             val vSize = vBuffer.remaining()
 
             val nv21 = ByteArray(ySize + uSize + vSize)
-
             yBuffer.get(nv21, 0, ySize)
             vBuffer.get(nv21, ySize, vSize)
             uBuffer.get(nv21, ySize + vSize, uSize)
@@ -55,7 +56,6 @@ class ImageAnalyzer(
             val imageBytes = out.toByteArray()
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         } catch (e: Exception) {
-            e.printStackTrace()
             null
         }
     }
