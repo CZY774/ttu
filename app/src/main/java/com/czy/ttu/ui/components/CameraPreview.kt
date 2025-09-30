@@ -2,10 +2,12 @@ package com.czy.ttu.ui.components
 
 import android.view.ViewGroup
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
@@ -45,24 +47,35 @@ internal fun CameraPreviewContent(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val fruitClassifier = remember { FruitClassifier(context) }
-    val cameraManager = remember { CameraManager(context, fruitClassifier) }
+    // Initialize classifier safely
+    val fruitClassifier = remember { 
+        try {
+            FruitClassifier(context)
+        } catch (e: Exception) {
+            android.util.Log.e("CameraPreview", "Failed to initialize FruitClassifier", e)
+            null
+        }
+    }
+    
+    val cameraManager = remember { 
+        fruitClassifier?.let { CameraManager(context, it) }
+    }
     
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     var previousFlashState by remember { mutableStateOf(isFlashOn) }
     var previousCameraState by remember { mutableStateOf(isFrontCamera) }
 
-    // Handle flash toggle without restarting camera
+    // Handle flash toggle
     LaunchedEffect(isFlashOn) {
         if (previousFlashState != isFlashOn) {
-            cameraManager.toggleFlash(isFlashOn)
+            cameraManager?.toggleFlash(isFlashOn)
             previousFlashState = isFlashOn
         }
     }
 
     // Handle camera switch
     LaunchedEffect(isFrontCamera) {
-        if (previousCameraState != isFrontCamera && previewView != null) {
+        if (previousCameraState != isFrontCamera && previewView != null && cameraManager != null) {
             cameraManager.switchCamera(
                 previewView = previewView!!,
                 lifecycleOwner = lifecycleOwner,
@@ -76,8 +89,8 @@ internal fun CameraPreviewContent(
 
     DisposableEffect(Unit) {
         onDispose {
-            cameraManager.shutdown()
-            fruitClassifier.close()
+            cameraManager?.shutdown()
+            fruitClassifier?.close()
         }
     }
 
@@ -97,7 +110,7 @@ internal fun CameraPreviewContent(
             },
             update = { preview ->
                 previewView = preview
-                cameraManager.startCamera(
+                cameraManager?.startCamera(
                     previewView = preview,
                     lifecycleOwner = lifecycleOwner,
                     isFlashOn = isFlashOn,
