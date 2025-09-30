@@ -37,7 +37,7 @@ fun CameraPreview(
 }
 
 @Composable
-private fun CameraPreviewContent(
+internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
     isFrontCamera: Boolean,
