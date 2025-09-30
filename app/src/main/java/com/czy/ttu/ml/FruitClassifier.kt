@@ -8,7 +8,6 @@ import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import java.nio.FloatBuffer
 import kotlin.math.exp
 
 class FruitClassifier(private val context: Context) {
