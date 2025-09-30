@@ -63,6 +63,7 @@ fun CameraScreen(
     var detectedFruit by remember { mutableStateOf<String?>(null) }
     var confidence by remember { mutableFloatStateOf(0f) }
     var isAnalyzing by remember { mutableStateOf(false) }
+    var triggerCapture by remember { mutableStateOf(0) }
 
     val fruitRepository = remember { FruitRepository() }
 
@@ -85,6 +86,7 @@ fun CameraScreen(
             modifier = Modifier.fillMaxSize(),
             isFlashOn = isFlashOn,
             isFrontCamera = isFrontCamera,
+            triggerCapture = triggerCapture,
             onDetection = { fruit, conf ->
                 detectedFruit = fruit
                 confidence = conf
@@ -209,9 +211,7 @@ fun CameraScreen(
             IconButton(
                 onClick = { 
                     isAnalyzing = true
-                    // Simulate detection for now
-                    detectedFruit = "Apple"
-                    confidence = 0.85f
+                    triggerCapture++
                 },
                 modifier = Modifier
                     .size(80.dp)
