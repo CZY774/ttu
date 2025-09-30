@@ -1,24 +1,56 @@
 package com.czy.ttu.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.FlashOff
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.czy.ttu.data.repository.FruitRepository
 import com.czy.ttu.ui.components.CameraPreview
-import com.czy.ttu.ui.theme.*
+import com.czy.ttu.ui.theme.CameraOverlay
+import com.czy.ttu.ui.theme.FruitGreen
+import com.czy.ttu.ui.theme.FruitOrange
+import com.czy.ttu.ui.theme.FruitRed
+import com.czy.ttu.ui.theme.FruitYellow
+import com.czy.ttu.ui.theme.TextDark
+import com.czy.ttu.ui.theme.TextLight
+import com.czy.ttu.ui.theme.White
 
 @Composable
 fun CameraScreen(
@@ -27,7 +59,7 @@ fun CameraScreen(
     var isFlashOn by remember { mutableStateOf(false) }
     var isFrontCamera by remember { mutableStateOf(false) }
     var detectedFruit by remember { mutableStateOf<String?>(null) }
-    var confidence by remember { mutableStateOf(0f) }
+    var confidence by remember { mutableFloatStateOf(0f) }
 
     val fruitRepository = remember { FruitRepository() }
 
@@ -65,8 +97,25 @@ fun CameraScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Back Button
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        color = Color.Gray.copy(alpha = 0.7f),
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = White
+                )
+            }
+
             Text(
-                text = "Fruit Detector Camera",
+                text = "Fruit Detector",
                 style = MaterialTheme.typography.titleLarge,
                 color = White
             )
@@ -157,32 +206,6 @@ fun CameraScreen(
                 fruitInfo = fruitInfo,
                 confidence = confidence
             )
-        }
-
-        // Capture Button (Visual indicator)
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = if (detectedFruit != null) 200.dp else 80.dp)
-                .navigationBarsPadding()
-        ) {
-            Surface(
-                modifier = Modifier.size(80.dp),
-                shape = CircleShape,
-                color = FruitYellow,
-                shadowElevation = 8.dp
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Inner circle for camera button effect
-                    Surface(
-                        modifier = Modifier.size(60.dp),
-                        shape = CircleShape,
-                        color = FruitYellow.copy(alpha = 0.8f)
-                    ) {}
-                }
-            }
         }
     }
 }
