@@ -104,7 +104,7 @@ class FruitClassifier(private val context: Context) {
 
             // Prepare output buffer
             val outputShape = interpreter!!.getOutputTensor(0).shape()
-            Log.d(TAG, "Output shape: ${outputShape.contentToString()}")
+            Log.d(TAG, "Output shape: ${outputShape.joinToString()}")
             val output = Array(1) { FloatArray(outputShape[1]) }
 
             // Run inference
@@ -113,7 +113,7 @@ class FruitClassifier(private val context: Context) {
 
             // Process output
             val predictions = output[0]
-            Log.d(TAG, "Raw predictions: ${predictions.take(5).contentToString()}...")
+            Log.d(TAG, "Raw predictions: ${predictions.take(5).joinToString()}")
             val probabilities = softmax(predictions)
 
             // Find the class with highest probability
