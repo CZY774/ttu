@@ -7,6 +7,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -21,6 +22,7 @@ class CameraManager(
     private var cameraProvider: ProcessCameraProvider? = null
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
+    private var analyzer: ImageAnalyzer? = null
     private var camera: Camera? = null
     private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -45,11 +47,12 @@ class CameraManager(
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
+                analyzer = ImageAnalyzer(fruitClassifier, onDetection)
                 imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
-                        it.setAnalyzer(cameraExecutor, ImageAnalyzer(fruitClassifier, onDetection))
+                        it.setAnalyzer(cameraExecutor, analyzer!!)
                     }
 
                 val cameraSelector = if (isFrontCamera) {
@@ -58,10 +61,8 @@ class CameraManager(
                     CameraSelector.DEFAULT_BACK_CAMERA
                 }
 
-                // Unbind use cases before rebinding
                 cameraProvider?.unbindAll()
 
-                // Bind use cases to camera
                 camera = cameraProvider?.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
@@ -69,7 +70,6 @@ class CameraManager(
                     imageAnalyzer
                 )
 
-                // Set flash mode
                 if (camera?.cameraInfo?.hasFlashUnit() == true) {
                     camera?.cameraControl?.enableTorch(isFlashOn)
                 }
@@ -78,9 +78,23 @@ class CameraManager(
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Camera initialization failed", exc)
-                exc.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(context))
+    }
+
+    fun captureAndAnalyze() {
+        analyzer?.triggerAnalysis()
+    }
+
+    fun focusOnPoint(x: Float, y: Float, previewView: PreviewView) {
+        try {
+            val factory = previewView.meteringPointFactory
+            val point = factory.createPoint(x, y)
+            val action = FocusMeteringAction.Builder(point).build()
+            camera?.cameraControl?.startFocusAndMetering(action)
+        } catch (e: Exception) {
+            Log.e(TAG, "Focus failed", e)
+        }
     }
 
     fun toggleFlash(isOn: Boolean) {
