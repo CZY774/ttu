@@ -8,6 +8,7 @@ import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
+import kotlin.collections.contentToString
 import kotlin.math.exp
 
 class FruitClassifier(private val context: Context) {
@@ -17,7 +18,7 @@ class FruitClassifier(private val context: Context) {
     private var imageProcessor: ImageProcessor? = null
 
     companion object {
-        private const val MODEL_PATH = "models/fruit_model_quantized.tflite"
+        private const val MODEL_PATH = "fruit_model_quantized.tflite"
         private const val LABELS_PATH = "class_names.json"
         private const val INPUT_SIZE = 224
         private const val TAG = "FruitClassifier"
@@ -91,28 +92,40 @@ class FruitClassifier(private val context: Context) {
 
         try {
             Log.d(TAG, "Starting image classification...")
+            Log.d(TAG, "Input bitmap size: ${bitmap.width}x${bitmap.height}")
             
             // Preprocess the image
             var tensorImage = TensorImage.fromBitmap(bitmap)
             tensorImage = imageProcessor!!.process(tensorImage)
+            Log.d(TAG, "Image preprocessed successfully")
 
             // Prepare output buffer
             val outputShape = interpreter!!.getOutputTensor(0).shape()
+            Log.d(TAG, "Output shape: ${outputShape.contentToString()}")
             val output = Array(1) { FloatArray(outputShape[1]) }
 
             // Run inference
             interpreter!!.run(tensorImage.buffer, output)
+            Log.d(TAG, "Inference completed")
 
             // Process output
             val predictions = output[0]
+            // Before
+            // After
+            Log.d(TAG, "Raw predictions: ${predictions.take(5).toString()}...")
             val probabilities = softmax(predictions)
 
             // Find the class with highest probability
             val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
             val confidence = probabilities[maxIndex]
-            val fruitName = if (maxIndex < labels.size) labels[maxIndex] else "Unknown"
+            val fruitName = if (maxIndex < labels.size) {
+                // Clean up the fruit name - remove numbers and underscores
+                cleanFruitName(labels[maxIndex])
+            } else {
+                "Unknown"
+            }
 
-            Log.d(TAG, "Classification result: $fruitName with confidence $confidence")
+            Log.d(TAG, "Classification result: $fruitName with confidence $confidence (index: $maxIndex)")
             return ClassificationResult(fruitName, confidence)
 
         } catch (e: Exception) {
@@ -120,6 +133,15 @@ class FruitClassifier(private val context: Context) {
             e.printStackTrace()
             return ClassificationResult("Classification Error", 0.0f)
         }
+    }
+
+    private fun cleanFruitName(rawName: String): String {
+        // Remove numbers, underscores, and extra descriptors
+        return rawName
+            .replace(Regex("\\d+"), "") // Remove numbers
+            .replace("_", " ") // Replace underscores with spaces
+            .split(" ")[0] // Take first word
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     }
 
     private fun softmax(input: FloatArray): FloatArray {
