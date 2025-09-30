@@ -48,7 +48,7 @@ fun ModelSwitcher(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            ModelManager.ModelType.values().forEach { modelType ->
+            ModelManager.ModelType.entries.forEach { modelType ->
                 DropdownMenuItem(
                     text = {
                         Column {
