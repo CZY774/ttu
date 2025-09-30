@@ -9,7 +9,6 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.czy.ttu.ml.FruitClassifier
 import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
 
 class ImageAnalyzer(
     private val fruitClassifier: FruitClassifier,
