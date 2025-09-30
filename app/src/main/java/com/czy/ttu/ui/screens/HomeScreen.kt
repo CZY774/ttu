@@ -11,8 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,13 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.czy.ttu.ui.components.FruitPatternBackground
 import com.czy.ttu.ui.theme.FruitGreen
+import androidx.compose.material3.OutlinedButton
 import com.czy.ttu.ui.theme.FruitYellow
 import com.czy.ttu.ui.theme.TextDark
 import com.czy.ttu.ui.theme.White
 
 @Composable
 fun HomeScreen(
-    onNavigateToCamera: () -> Unit
+    onNavigateToCamera: () -> Unit,
+    onNavigateToAbout: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -47,6 +55,29 @@ fun HomeScreen(
             )
     ) {
         FruitPatternBackground()
+
+        // Top buttons
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            IconButton(onClick = onNavigateToSettings) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = FruitGreen
+                )
+            }
+            IconButton(onClick = onNavigateToAbout) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "About",
+                    tint = FruitGreen
+                )
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -111,23 +142,85 @@ fun HomeScreen(
                 }
             }
 
-            // Let's Go Button
-            Button(
-                onClick = onNavigateToCamera,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(28.dp)),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = FruitGreen,
-                    contentColor = White
-                )
+            // Buttons
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Let's Go!",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = White
-                )
+                // Let's Go Button
+                Button(
+                    onClick = onNavigateToCamera,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(28.dp)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = FruitGreen,
+                        contentColor = White
+                    )
+                ) {
+                    Text(
+                        text = "Let's Go!",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Secondary buttons row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Settings Button
+                    OutlinedButton(
+                        onClick = onNavigateToSettings,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .clip(RoundedCornerShape(24.dp)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = FruitGreen
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = null,
+                            tint = FruitGreen
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(
+                            text = "Settings",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = FruitGreen
+                        )
+                    }
+
+                    // About Button
+                    OutlinedButton(
+                        onClick = onNavigateToAbout,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .clip(RoundedCornerShape(24.dp)),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = FruitGreen
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = FruitGreen
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(
+                            text = "About",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = FruitGreen
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
