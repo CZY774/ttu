@@ -93,22 +93,13 @@ class FruitClassifier(private val context: Context) {
             tensorImage = imageProcessor!!.process(tensorImage)
             Log.d(TAG, "Image preprocessed successfully")
 
-            // Convert to float array manually
+            // Prepare input and output buffers
             val inputBuffer = tensorImage.buffer
-            val floatArray = FloatArray(INPUT_SIZE * INPUT_SIZE * 3)
-            
-            inputBuffer.rewind()
-            for (i in floatArray.indices) {
-                floatArray[i] = (inputBuffer.get().toInt() and 0xFF) / 255.0f
-            }
-
-            // Prepare output buffer
             val outputShape = interpreter!!.getOutputTensor(0).shape()
-            Log.d(TAG, "Output shape: ${outputShape.joinToString()}")
             val output = Array(1) { FloatArray(outputShape[1]) }
 
-            // Run inference
-            interpreter!!.run(floatArray, output)
+            // Run inference directly with buffer
+            interpreter!!.run(inputBuffer, output)
             Log.d(TAG, "Inference completed")
 
             // Process output
