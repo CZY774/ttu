@@ -76,6 +76,16 @@ fun CameraScreen(
         }
     }
 
+    // Timeout for analysis - reset loading state after 10 seconds
+    LaunchedEffect(isAnalyzing) {
+        if (isAnalyzing) {
+            kotlinx.coroutines.delay(10000)
+            if (isAnalyzing) {
+                isAnalyzing = false
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -90,6 +100,9 @@ fun CameraScreen(
             onDetection = { fruit, conf ->
                 detectedFruit = fruit
                 confidence = conf
+                isAnalyzing = false
+            },
+            onAnalysisComplete = {
                 isAnalyzing = false
             }
         )
