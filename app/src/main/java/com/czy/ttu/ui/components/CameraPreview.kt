@@ -21,7 +21,8 @@ fun CameraPreview(
     isFlashOn: Boolean,
     isFrontCamera: Boolean,
     triggerCapture: Int = 0,
-    onDetection: (String, Float) -> Unit
+    onDetection: (String, Float) -> Unit,
+    onAnalysisComplete: () -> Unit = {}
 ) {
     CameraPermission(
         onPermissionGranted = {
@@ -30,7 +31,8 @@ fun CameraPreview(
                 isFlashOn = isFlashOn,
                 isFrontCamera = isFrontCamera,
                 triggerCapture = triggerCapture,
-                onDetection = onDetection
+                onDetection = onDetection,
+                onAnalysisComplete = onAnalysisComplete
             )
         },
         onPermissionDenied = {
@@ -45,7 +47,8 @@ internal fun CameraPreviewContent(
     isFlashOn: Boolean,
     isFrontCamera: Boolean,
     triggerCapture: Int = 0,
-    onDetection: (String, Float) -> Unit
+    onDetection: (String, Float) -> Unit,
+    onAnalysisComplete: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -91,7 +94,8 @@ internal fun CameraPreviewContent(
                 lifecycleOwner = lifecycleOwner,
                 isFrontCamera = isFrontCamera,
                 isFlashOn = isFlashOn,
-                onDetection = onDetection
+                onDetection = onDetection,
+                onAnalysisComplete = onAnalysisComplete
             )
             previousCameraState = isFrontCamera
         }
@@ -125,7 +129,8 @@ internal fun CameraPreviewContent(
                     lifecycleOwner = lifecycleOwner,
                     isFlashOn = isFlashOn,
                     isFrontCamera = isFrontCamera,
-                    onDetection = onDetection
+                    onDetection = onDetection,
+                    onAnalysisComplete = onAnalysisComplete
                 )
             }
         )
