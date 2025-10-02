@@ -35,7 +35,8 @@ class CameraManager(
         lifecycleOwner: LifecycleOwner,
         isFlashOn: Boolean = false,
         isFrontCamera: Boolean = false,
-        onDetection: (String, Float) -> Unit
+        onDetection: (String, Float) -> Unit,
+        onAnalysisComplete: () -> Unit = {}
     ) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
@@ -47,7 +48,7 @@ class CameraManager(
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
-                analyzer = ImageAnalyzer(fruitClassifier, onDetection)
+                analyzer = ImageAnalyzer(fruitClassifier, onDetection, onAnalysisComplete)
                 imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
@@ -115,9 +116,10 @@ class CameraManager(
         lifecycleOwner: LifecycleOwner,
         isFrontCamera: Boolean,
         isFlashOn: Boolean,
-        onDetection: (String, Float) -> Unit
+        onDetection: (String, Float) -> Unit,
+        onAnalysisComplete: () -> Unit = {}
     ) {
-        startCamera(previewView, lifecycleOwner, isFlashOn, isFrontCamera, onDetection)
+        startCamera(previewView, lifecycleOwner, isFlashOn, isFrontCamera, onDetection, onAnalysisComplete)
     }
 
     fun shutdown() {
