@@ -12,7 +12,8 @@ import java.io.ByteArrayOutputStream
 
 class ImageAnalyzer(
     private val fruitClassifier: FruitClassifier,
-    private val onDetection: (String, Float) -> Unit
+    private val onDetection: (String, Float) -> Unit,
+    private val onAnalysisComplete: () -> Unit = {}
 ) : ImageAnalysis.Analyzer {
 
     private var shouldAnalyze = false
@@ -24,12 +25,18 @@ class ImageAnalyzer(
     override fun analyze(image: ImageProxy) {
         if (shouldAnalyze) {
             shouldAnalyze = false
-            val bitmap = imageProxyToBitmap(image)
-            bitmap?.let {
-                val result = fruitClassifier.classifyImage(it)
-                if (result.confidence > 0.3f) {
-                    onDetection(result.fruitName, result.confidence)
+            try {
+                val bitmap = imageProxyToBitmap(image)
+                bitmap?.let {
+                    val result = fruitClassifier.classifyImage(it)
+                    if (result.confidence > 0.3f) {
+                        onDetection(result.fruitName, result.confidence)
+                    }
                 }
+            } catch (e: Exception) {
+                android.util.Log.e("ImageAnalyzer", "Analysis failed", e)
+            } finally {
+                onAnalysisComplete()
             }
         }
         image.close()
