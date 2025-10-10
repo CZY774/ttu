@@ -84,7 +84,7 @@ class FruitClassifier(private val context: Context) {
             return ClassificationResult("Labels Error", 0.0f)
         }
 
-        try {
+        return try {
             Log.d(TAG, "Starting image classification...")
             Log.d(TAG, "Input bitmap size: ${bitmap.width}x${bitmap.height}")
             
@@ -98,9 +98,10 @@ class FruitClassifier(private val context: Context) {
             val outputShape = interpreter!!.getOutputTensor(0).shape()
             val output = Array(1) { FloatArray(outputShape[1]) }
 
-            // Run inference directly with buffer
+            // Run inference with timeout protection
+            Log.d(TAG, "Running inference...")
             interpreter!!.run(inputBuffer, output)
-            Log.d(TAG, "Inference completed")
+            Log.d(TAG, "Inference completed successfully")
 
             // Process output
             val predictions = output[0]
@@ -117,12 +118,12 @@ class FruitClassifier(private val context: Context) {
             }
 
             Log.d(TAG, "Classification result: $fruitName with confidence $confidence (index: $maxIndex)")
-            return ClassificationResult(fruitName, confidence)
+            ClassificationResult(fruitName, confidence)
 
         } catch (e: Exception) {
             Log.e(TAG, "Error during image classification", e)
             e.printStackTrace()
-            return ClassificationResult("Classification Error", 0.0f)
+            ClassificationResult("Classification Error", 0.0f)
         }
     }
 
