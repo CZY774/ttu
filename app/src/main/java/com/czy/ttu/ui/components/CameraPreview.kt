@@ -74,7 +74,7 @@ internal fun CameraPreviewContent(
     // Handle capture trigger
     LaunchedEffect(triggerCapture) {
         if (triggerCapture > 0) {
-            cameraManager?.captureAndAnalyze()
+            cameraManager?.captureAndAnalyze(onAnalysisComplete)
         }
     }
 
