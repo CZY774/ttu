@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream
 class ImageAnalyzer(
     private val fruitClassifier: FruitClassifier,
     private val onDetection: (String, Float) -> Unit,
-    var onAnalysisComplete: () -> Unit = {}
+    private val onAnalysisComplete: () -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private var shouldAnalyze = false
