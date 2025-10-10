@@ -76,11 +76,12 @@ fun CameraScreen(
         }
     }
 
-    // Timeout for analysis - reset loading state after 10 seconds
-    LaunchedEffect(isAnalyzing) {
-        if (isAnalyzing) {
-            kotlinx.coroutines.delay(10000)
+    // Timeout for analysis - reset loading state after 8 seconds as fallback
+    LaunchedEffect(triggerCapture) {
+        if (triggerCapture > 0) {
+            kotlinx.coroutines.delay(8000)
             if (isAnalyzing) {
+                android.util.Log.w("CameraScreen", "Analysis timeout - forcing completion")
                 isAnalyzing = false
             }
         }
@@ -98,11 +99,13 @@ fun CameraScreen(
             isFrontCamera = isFrontCamera,
             triggerCapture = triggerCapture,
             onDetection = { fruit, conf ->
+                android.util.Log.d("CameraScreen", "Detection received: $fruit, confidence: $conf")
                 detectedFruit = fruit
                 confidence = conf
                 isAnalyzing = false
             },
             onAnalysisComplete = {
+                android.util.Log.d("CameraScreen", "Analysis complete callback received")
                 isAnalyzing = false
             }
         )
@@ -223,8 +226,10 @@ fun CameraScreen(
         ) {
             IconButton(
                 onClick = { 
+                    android.util.Log.d("CameraScreen", "Capture button clicked")
                     isAnalyzing = true
                     triggerCapture++
+                    android.util.Log.d("CameraScreen", "Analysis started, triggerCapture: $triggerCapture")
                 },
                 modifier = Modifier
                     .size(80.dp)
