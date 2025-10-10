@@ -83,8 +83,7 @@ class CameraManager(
         }, ContextCompat.getMainExecutor(context))
     }
 
-    fun captureAndAnalyze(onAnalysisComplete: () -> Unit) {
-        analyzer?.onAnalysisComplete = onAnalysisComplete
+    fun captureAndAnalyze(onAnalysisComplete: () -> Unit = {}) {
         analyzer?.triggerAnalysis()
     }
 
