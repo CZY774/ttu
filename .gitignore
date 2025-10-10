@@ -15,3 +15,7 @@
 .cxx
 local.properties
 Image-Classification-App-with-Teachable-Machine/
+INSTRUCTIONS.md
+NEWEST-BUG.md
+PROJECT-EXAMPLES.md
+training-model.py
