@@ -63,7 +63,7 @@ internal fun CameraPreviewContent(
         }
     }
     
-    val cameraManager = remember { 
+    val cameraManager = remember(onDetection, onAnalysisComplete) {
         fruitClassifier?.let { CameraManager(context, it) }
     }
     
