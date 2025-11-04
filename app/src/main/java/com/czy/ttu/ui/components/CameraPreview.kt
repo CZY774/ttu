@@ -47,7 +47,6 @@ fun CameraPreview(
 }
 
 @Composable
-@UiComposable
 internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
@@ -108,6 +107,7 @@ internal fun CameraPreviewContent(
         }
     }
 
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     Box(modifier = modifier) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
