@@ -2,15 +2,19 @@ package com.czy.ttu.ui.components
 
 import android.view.ViewGroup
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.czy.ttu.camera.CameraManager
 import com.czy.ttu.camera.CameraPermission
 import com.czy.ttu.ml.FruitClassifier
@@ -41,7 +45,7 @@ fun CameraPreview(
     )
 }
 
-@Composable
+@androidx.compose.runtime.Composable
 internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
@@ -82,8 +86,8 @@ internal fun CameraPreviewContent(
     LaunchedEffect(isFlashOn) {
         if (previousFlashState != isFlashOn) {
             cameraManager?.toggleFlash(isFlashOn)
-            previousFlashState = isFlashOn
         }
+        previousFlashState = isFlashOn
     }
 
     // Handle camera switch
@@ -97,8 +101,8 @@ internal fun CameraPreviewContent(
                 onDetection = onDetection,
                 onAnalysisComplete = onAnalysisComplete
             )
-            previousCameraState = isFrontCamera
         }
+        previousCameraState = isFrontCamera
     }
 
     DisposableEffect(Unit) {
