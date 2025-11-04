@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -46,6 +47,7 @@ fun CameraPreview(
 }
 
 @Composable
+@UiComposable
 internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
@@ -107,7 +109,7 @@ internal fun CameraPreviewContent(
     }
 
     Box(modifier = modifier) {
-        androidx.compose.ui.viewinterop.AndroidView(
+        AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 PreviewView(context).apply {
