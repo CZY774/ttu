@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.czy.ttu.camera.CameraManager
 import com.czy.ttu.camera.CameraPermission
@@ -106,32 +107,52 @@ internal fun CameraPreviewContent(
         }
     }
 
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     Box(modifier = modifier) {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                PreviewView(context).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    scaleType = PreviewView.ScaleType.FILL_CENTER
-                }.also { 
-                    previewView = it
-                }
-            },
-            update = { preview ->
-                previewView = preview
-                cameraManager?.startCamera(
-                    previewView = preview,
-                    lifecycleOwner = lifecycleOwner,
-                    isFlashOn = isFlashOn,
-                    isFrontCamera = isFrontCamera,
-                    onDetection = onDetection,
-                    onAnalysisComplete = onAnalysisComplete
-                )
-            }
+        CameraAndroidView(
+            onPreviewViewCreated = { previewView = it },
+            cameraManager = cameraManager,
+            lifecycleOwner = lifecycleOwner,
+            isFlashOn = isFlashOn,
+            isFrontCamera = isFrontCamera,
+            onDetection = onDetection,
+            onAnalysisComplete = onAnalysisComplete
         )
     }
+}
+
+@Composable
+private fun CameraAndroidView(
+    onPreviewViewCreated: (PreviewView) -> Unit,
+    cameraManager: CameraManager?,
+    lifecycleOwner: LifecycleOwner,
+    isFlashOn: Boolean,
+    isFrontCamera: Boolean,
+    onDetection: (String, Float) -> Unit,
+    onAnalysisComplete: () -> Unit
+) {
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            PreviewView(context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                scaleType = PreviewView.ScaleType.FILL_CENTER
+            }.also { 
+                onPreviewViewCreated(it)
+            }
+        },
+        update = { preview ->
+            onPreviewViewCreated(preview)
+            cameraManager?.startCamera(
+                previewView = preview,
+                lifecycleOwner = lifecycleOwner,
+                isFlashOn = isFlashOn,
+                isFrontCamera = isFrontCamera,
+                onDetection = onDetection,
+                onAnalysisComplete = onAnalysisComplete
+            )
+        }
+    )
 }
