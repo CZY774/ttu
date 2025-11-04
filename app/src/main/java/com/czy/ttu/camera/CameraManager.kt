@@ -91,17 +91,6 @@ class CameraManager(
         analyzer?.triggerAnalysis(onAnalysisComplete)
     }
 
-    fun focusOnPoint(x: Float, y: Float, previewView: PreviewView) {
-        try {
-            val factory = previewView.meteringPointFactory
-            val point = factory.createPoint(x, y)
-            val action = FocusMeteringAction.Builder(point).build()
-            camera?.cameraControl?.startFocusAndMetering(action)
-        } catch (e: Exception) {
-            Log.e(TAG, "Focus failed", e)
-        }
-    }
-
     fun toggleFlash(isOn: Boolean) {
         try {
             if (camera?.cameraInfo?.hasFlashUnit() == true) {
