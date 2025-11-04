@@ -45,7 +45,7 @@ fun CameraPreview(
     )
 }
 
-@androidx.compose.runtime.Composable
+@Composable
 internal fun CameraPreviewContent(
     modifier: Modifier = Modifier,
     isFlashOn: Boolean,
@@ -72,8 +72,6 @@ internal fun CameraPreviewContent(
     }
     
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
-    var previousFlashState by remember { mutableStateOf(isFlashOn) }
-    var previousCameraState by remember { mutableStateOf(isFrontCamera) }
 
     // Handle capture trigger
     LaunchedEffect(triggerCapture) {
@@ -84,15 +82,12 @@ internal fun CameraPreviewContent(
 
     // Handle flash toggle
     LaunchedEffect(isFlashOn) {
-        if (previousFlashState != isFlashOn) {
-            cameraManager?.toggleFlash(isFlashOn)
-        }
-        previousFlashState = isFlashOn
+        cameraManager?.toggleFlash(isFlashOn)
     }
 
     // Handle camera switch
-    LaunchedEffect(isFrontCamera) {
-        if (previousCameraState != isFrontCamera && previewView != null && cameraManager != null) {
+    LaunchedEffect(isFrontCamera, previewView, cameraManager) {
+        if (previewView != null && cameraManager != null) {
             cameraManager.switchCamera(
                 previewView = previewView!!,
                 lifecycleOwner = lifecycleOwner,
@@ -102,7 +97,6 @@ internal fun CameraPreviewContent(
                 onAnalysisComplete = onAnalysisComplete
             )
         }
-        previousCameraState = isFrontCamera
     }
 
     DisposableEffect(Unit) {
@@ -113,7 +107,7 @@ internal fun CameraPreviewContent(
     }
 
     Box(modifier = modifier) {
-        AndroidView(
+        androidx.compose.ui.viewinterop.AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 PreviewView(context).apply {
