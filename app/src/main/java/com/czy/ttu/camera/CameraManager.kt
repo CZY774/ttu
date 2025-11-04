@@ -83,8 +83,12 @@ class CameraManager(
         }, ContextCompat.getMainExecutor(context))
     }
 
-    fun captureAndAnalyze(onAnalysisComplete: () -> Unit = {}) {
-        analyzer?.triggerAnalysis()
+    fun captureAndAnalyze(
+        onDetection: (String, Float) -> Unit,
+        onAnalysisComplete: () -> Unit = {}
+    ) {
+        analyzer?.updateCallbacks(onDetection, onAnalysisComplete)
+        analyzer?.triggerAnalysis(onAnalysisComplete)
     }
 
     fun focusOnPoint(x: Float, y: Float, previewView: PreviewView) {
