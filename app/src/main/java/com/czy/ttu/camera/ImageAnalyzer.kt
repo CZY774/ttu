@@ -12,14 +12,24 @@ import java.io.ByteArrayOutputStream
 
 class ImageAnalyzer(
     private val fruitClassifier: FruitClassifier,
-    private val onDetection: (String, Float) -> Unit,
-    private val onAnalysisComplete: () -> Unit
+    private var onDetection: (String, Float) -> Unit,
+    private var onAnalysisComplete: () -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private var shouldAnalyze = false
+    private var dynamicAnalysisCompleteCallback: (() -> Unit)? = null
 
-    fun triggerAnalysis() {
+    fun updateCallbacks(
+        newOnDetection: (String, Float) -> Unit,
+        newOnAnalysisComplete: () -> Unit
+    ) {
+        onDetection = newOnDetection
+        onAnalysisComplete = newOnAnalysisComplete
+    }
+
+    fun triggerAnalysis(onComplete: (() -> Unit)? = null) {
         shouldAnalyze = true
+        dynamicAnalysisCompleteCallback = onComplete
     }
 
     override fun analyze(image: ImageProxy) {
@@ -44,8 +54,10 @@ class ImageAnalyzer(
                 } catch (e: Exception) {
                     android.util.Log.e("ImageAnalyzer", "Analysis failed", e)
                 } finally {
-                    android.util.Log.d("ImageAnalyzer", "Analysis complete, calling onAnalysisComplete")
+                    android.util.Log.d("ImageAnalyzer", "Analysis complete, calling callbacks")
+                    dynamicAnalysisCompleteCallback?.invoke()
                     onAnalysisComplete()
+                    dynamicAnalysisCompleteCallback = null
                 }
             }
         } finally {
