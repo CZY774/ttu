@@ -86,6 +86,7 @@ class ImageAnalyzer(
             val imageBytes = out.toByteArray()
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         } catch (e: Exception) {
+            android.util.Log.e("ImageAnalyzer", "Failed to convert ImageProxy to Bitmap", e)
             null
         }
     }
