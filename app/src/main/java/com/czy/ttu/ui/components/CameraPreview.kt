@@ -43,6 +43,7 @@ fun CameraPreview(
         onPermissionDenied = {
             PermissionDeniedScreen()
         }
+
     )
 }
 
