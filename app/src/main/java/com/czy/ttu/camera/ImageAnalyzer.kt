@@ -38,6 +38,10 @@ class ImageAnalyzer(
                 shouldAnalyze = false
                 android.util.Log.d("ImageAnalyzer", "Starting analysis...")
                 
+                val localCallback = dynamicAnalysisCompleteCallback
+                val localOnComplete = onAnalysisComplete
+                dynamicAnalysisCompleteCallback = null
+                
                 try {
                     val bitmap = imageProxyToBitmap(image)
                     if (bitmap != null) {
@@ -55,9 +59,8 @@ class ImageAnalyzer(
                     android.util.Log.e("ImageAnalyzer", "Analysis failed", e)
                 } finally {
                     android.util.Log.d("ImageAnalyzer", "Analysis complete, calling callbacks")
-                    dynamicAnalysisCompleteCallback?.invoke()
-                    onAnalysisComplete()
-                    dynamicAnalysisCompleteCallback = null
+                    localCallback?.invoke()
+                    localOnComplete()
                 }
             }
         } finally {
