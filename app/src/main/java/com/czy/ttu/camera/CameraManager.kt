@@ -86,6 +86,13 @@ class CameraManager(
         onDetection: (String, Float) -> Unit,
         onAnalysisComplete: () -> Unit = {}
     ) {
+        if (analyzer == null) {
+            Log.w(TAG, "Analyzer not ready, calling onAnalysisComplete immediately")
+            onAnalysisComplete()
+            return
+        }
+        
+        Log.d(TAG, "Triggering image capture and analysis")
         analyzer?.updateCallbacks(onDetection, onAnalysisComplete)
         analyzer?.triggerAnalysis(onAnalysisComplete)
     }
