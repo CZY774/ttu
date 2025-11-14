@@ -2,37 +2,33 @@ package com.czy.ttu.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.czy.ttu.R
 
-val Typography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = 0.sp
+val InterFamily = FontFamily(Font(R.font.inter_regular))
+
+val AppTypography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = InterFamily,
+        fontSize = 48.sp,
+        fontWeight = FontWeight.Bold
     ),
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
-        letterSpacing = 0.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        fontFamily = InterFamily,
+        fontSize = 32.sp,
+        fontWeight = FontWeight.SemiBold
     ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = InterFamily,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Normal
+    ),
+    labelLarge = TextStyle(
+        fontFamily = InterFamily,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        fontWeight = FontWeight.Medium
     )
 )
