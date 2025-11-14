@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CameraControls(
     modifier: Modifier = Modifier,
-    lensFacing: Int,
     flashEnabled: Boolean,
     onSwitchCamera: () -> Unit,
     onToggleFlash: () -> Unit
