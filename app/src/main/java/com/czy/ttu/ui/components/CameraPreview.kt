@@ -77,8 +77,12 @@ internal fun CameraPreviewContent(
 
     // Handle capture trigger
     LaunchedEffect(triggerCapture) {
-        if (triggerCapture > 0) {
-            cameraManager?.captureAndAnalyze(onDetection, onAnalysisComplete)
+        if (triggerCapture > 0 && cameraManager != null) {
+            android.util.Log.d("CameraPreview", "Capture triggered: $triggerCapture")
+            cameraManager.captureAndAnalyze(onDetection, onAnalysisComplete)
+        } else if (triggerCapture > 0 && cameraManager == null) {
+            android.util.Log.e("CameraPreview", "Camera not ready, calling onAnalysisComplete")
+            onAnalysisComplete()
         }
     }
 
