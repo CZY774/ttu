@@ -1,163 +1,86 @@
 package com.czy.ttu.ui.components
 
-import android.view.ViewGroup
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.czy.ttu.camera.CameraManager
-import com.czy.ttu.camera.CameraPermission
-import com.czy.ttu.ml.FruitClassifier
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
+import java.util.concurrent.Executors
 
 @Composable
 fun CameraPreview(
-    modifier: Modifier = Modifier,
-    isFlashOn: Boolean,
-    isFrontCamera: Boolean,
-    triggerCapture: Int = 0,
-    onDetection: (String, Float) -> Unit,
-    onAnalysisComplete: () -> Unit = {}
-) {
-    CameraPermission(
-        onPermissionGranted = {
-            CameraPreviewContent(
-                modifier = modifier,
-                isFlashOn = isFlashOn,
-                isFrontCamera = isFrontCamera,
-                triggerCapture = triggerCapture,
-                onDetection = onDetection,
-                onAnalysisComplete = onAnalysisComplete
-            )
-        },
-        onPermissionDenied = {
-            PermissionDeniedScreen()
-        }
-
-    )
-}
-
-@Composable
-internal fun CameraPreviewContent(
-    modifier: Modifier = Modifier,
-    isFlashOn: Boolean,
-    isFrontCamera: Boolean,
-    triggerCapture: Int = 0,
-    onDetection: (String, Float) -> Unit,
-    onAnalysisComplete: () -> Unit = {}
+    lensFacing: Int,
+    flashEnabled: Boolean,
+    onImageCaptured: (Bitmap) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    // Initialize classifier safely
-    val fruitClassifier = remember { 
-        try {
-            FruitClassifier(context)
-        } catch (e: Exception) {
-            android.util.Log.e("CameraPreview", "Failed to initialize FruitClassifier", e)
-            null
-        }
-    }
+    val previewView = remember { PreviewView(context) }
+    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
     
-    val cameraManager = remember(onDetection, onAnalysisComplete) {
-        fruitClassifier?.let { CameraManager(context, it) }
-    }
-    
-    var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    var camera by remember { mutableStateOf<Camera?>(null) }
 
-    // Handle capture trigger
-    LaunchedEffect(triggerCapture) {
-        if (triggerCapture > 0 && cameraManager != null) {
-            android.util.Log.d("CameraPreview", "Capture triggered: $triggerCapture")
-            cameraManager.captureAndAnalyze(onDetection, onAnalysisComplete)
-        } else if (triggerCapture > 0 && cameraManager == null) {
-            android.util.Log.e("CameraPreview", "Camera not ready, calling onAnalysisComplete")
-            onAnalysisComplete()
+    LaunchedEffect(lensFacing, flashEnabled) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        val cameraProvider = cameraProviderFuture.get()
+        
+        cameraProvider.unbindAll()
+
+        val preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(previewView.surfaceProvider)
         }
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+            .also {
+                it.setAnalyzer(cameraExecutor) { imageProxy ->
+                    val bitmap = imageProxy.toBitmap()
+                    val rotatedBitmap = rotateBitmap(bitmap, imageProxy.imageInfo.rotationDegrees.toFloat())
+                    onImageCaptured(rotatedBitmap)
+                    imageProxy.close()
+                }
+            }
+
+        val cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(lensFacing)
+            .build()
+
+        camera = cameraProvider.bindToLifecycle(
+            lifecycleOwner,
+            cameraSelector,
+            preview,
+            imageAnalysis
+        )
+
+        camera?.cameraControl?.enableTorch(flashEnabled)
     }
 
-    // Handle flash toggle
-    LaunchedEffect(isFlashOn) {
-        cameraManager?.toggleFlash(isFlashOn)
+    LaunchedEffect(flashEnabled) {
+        camera?.cameraControl?.enableTorch(flashEnabled)
     }
 
-    // Handle camera switch
-    LaunchedEffect(isFrontCamera, previewView, cameraManager) {
-        if (previewView != null && cameraManager != null) {
-            cameraManager.switchCamera(
-                previewView = previewView!!,
-                lifecycleOwner = lifecycleOwner,
-                isFrontCamera = isFrontCamera,
-                isFlashOn = isFlashOn,
-                onDetection = onDetection,
-                onAnalysisComplete = onAnalysisComplete
-            )
-        }
-    }
+    AndroidView(
+        factory = { previewView },
+        modifier = Modifier.fillMaxSize()
+    )
 
     DisposableEffect(Unit) {
         onDispose {
-            cameraManager?.shutdown()
-            fruitClassifier?.close()
+            cameraExecutor.shutdown()
         }
-    }
-
-    Box(modifier = modifier) {
-        CameraAndroidView(
-            onPreviewViewCreated = { previewView = it },
-            cameraManager = cameraManager,
-            lifecycleOwner = lifecycleOwner,
-            isFlashOn = isFlashOn,
-            isFrontCamera = isFrontCamera,
-            onDetection = onDetection,
-            onAnalysisComplete = onAnalysisComplete
-        )
     }
 }
 
-@Composable
-private fun CameraAndroidView(
-    onPreviewViewCreated: (PreviewView) -> Unit,
-    cameraManager: CameraManager?,
-    lifecycleOwner: LifecycleOwner,
-    isFlashOn: Boolean,
-    isFrontCamera: Boolean,
-    onDetection: (String, Float) -> Unit,
-    onAnalysisComplete: () -> Unit
-) {
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { context ->
-            PreviewView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                scaleType = PreviewView.ScaleType.FILL_CENTER
-            }.also { 
-                onPreviewViewCreated(it)
-            }
-        },
-        update = { preview ->
-            onPreviewViewCreated(preview)
-            cameraManager?.startCamera(
-                previewView = preview,
-                lifecycleOwner = lifecycleOwner,
-                isFlashOn = isFlashOn,
-                isFrontCamera = isFrontCamera,
-                onDetection = onDetection,
-                onAnalysisComplete = onAnalysisComplete
-            )
-        }
-    )
+private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+    val matrix = Matrix().apply { postRotate(degrees) }
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
