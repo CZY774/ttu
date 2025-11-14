@@ -14,8 +14,8 @@
 .externalNativeBuild
 .cxx
 local.properties
-Image-Classification-App-with-Teachable-Machine/
 INSTRUCTIONS.md
-NEWEST-BUG.md
-PROJECT-EXAMPLES.md
-training-model.py
+dataset_preparation.py
+inspect_dataset.py
+test_tflite_inference.py
+train_fruit_model.py
