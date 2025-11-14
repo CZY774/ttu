@@ -2,7 +2,6 @@ package com.czy.ttu.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -80,7 +79,7 @@ fun CameraScreen() {
             
             detectionResult?.let { result ->
                 if (result.confidence > 0.7f) {
-                    val fruitInfo = repository.getFruitInfo(result.label)
+                    val fruitInfo = repository.getFruitInfo(result.fruitName)
                     DetectionResultCard(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
