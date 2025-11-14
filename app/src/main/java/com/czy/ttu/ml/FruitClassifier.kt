@@ -2,153 +2,89 @@ package com.czy.ttu.ml
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
+import com.google.gson.Gson
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.support.common.FileUtil
-import org.tensorflow.lite.support.image.ImageProcessor
-import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
-import kotlin.math.exp
+import java.io.FileInputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.channels.FileChannel
 
 class FruitClassifier(private val context: Context) {
-
     private var interpreter: Interpreter? = null
     private var labels: List<String> = emptyList()
-    private var imageProcessor: ImageProcessor? = null
-
-    companion object {
-        private const val MODEL_PATH = "fruit_model_quantized.tflite"
-        private const val LABELS_PATH = "class_names.json"
-        private const val INPUT_SIZE = 224
-        private const val TAG = "FruitClassifier"
-    }
+    private val imageSize = 224
 
     init {
         loadModel()
         loadLabels()
-        setupImageProcessor()
     }
 
     private fun loadModel() {
-        try {
-            val model = FileUtil.loadMappedFile(context, MODEL_PATH)
-            val options = Interpreter.Options().apply {
-                setUseNNAPI(true)
-                setNumThreads(4)
-            }
-            interpreter = Interpreter(model, options)
-            Log.d(TAG, "Model loaded successfully from $MODEL_PATH")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load model from $MODEL_PATH", e)
-            e.printStackTrace()
+        val modelFile = loadModelFile("fruit_detector_quantized.tflite")
+        val options = Interpreter.Options().apply {
+            setNumThreads(4)
         }
+        interpreter = Interpreter(modelFile, options)
+    }
+
+    private fun loadModelFile(filename: String): ByteBuffer {
+        val assetFileDescriptor = context.assets.openFd(filename)
+        val inputStream = FileInputStream(assetFileDescriptor.fileDescriptor)
+        val fileChannel = inputStream.channel
+        val startOffset = assetFileDescriptor.startOffset
+        val declaredLength = assetFileDescriptor.declaredLength
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
     private fun loadLabels() {
-        try {
-            val jsonString = context.assets.open(LABELS_PATH).bufferedReader().use { it.readText() }
-            labels = parseClassNames(jsonString)
-            Log.d(TAG, "Labels loaded successfully: ${labels.size} classes")
-            Log.d(TAG, "Labels: $labels")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to load labels from $LABELS_PATH", e)
-            e.printStackTrace()
-            labels = listOf("Apple", "Banana", "Orange", "Grape", "Strawberry")
-            Log.d(TAG, "Using fallback labels: $labels")
-        }
+        val json = context.assets.open("class_names.json")
+            .bufferedReader()
+            .use { it.readText() }
+        labels = Gson().fromJson(json, Array<String>::class.java).toList()
     }
 
-    private fun parseClassNames(jsonString: String): List<String> {
-        val regex = """"([^"]+)"""".toRegex()
-        return regex.findAll(jsonString)
-            .map { it.groupValues[1] }
-            .filter { it != "class_names" }
-            .toList()
+    fun classify(bitmap: Bitmap): ClassificationResult {
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, true)
+        val input = preprocessImage(resizedBitmap)
+        val output = Array(1) { FloatArray(labels.size) }
+
+        interpreter?.run(input, output)
+
+        val probabilities = output[0]
+        val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
+        val confidence = probabilities[maxIndex]
+
+        return ClassificationResult(
+            fruitName = labels[maxIndex],
+            confidence = confidence
+        )
     }
 
-    private fun setupImageProcessor() {
-        imageProcessor = ImageProcessor.Builder()
-            .add(ResizeOp(INPUT_SIZE, INPUT_SIZE, ResizeOp.ResizeMethod.BILINEAR))
-            .build()
-        Log.d(TAG, "Image processor setup complete")
-    }
+    private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
+        val byteBuffer = ByteBuffer.allocateDirect(4 * imageSize * imageSize * 3)
+        byteBuffer.order(ByteOrder.nativeOrder())
 
-    fun classifyImage(bitmap: Bitmap): ClassificationResult {
-        if (interpreter == null) {
-            Log.e(TAG, "Interpreter is null - model not loaded")
-            return ClassificationResult("Model Error", 0.0f)
-        }
-        
-        if (labels.isEmpty()) {
-            Log.e(TAG, "Labels are empty - labels not loaded")
-            return ClassificationResult("Labels Error", 0.0f)
-        }
+        val intValues = IntArray(imageSize * imageSize)
+        bitmap.getPixels(intValues, 0, imageSize, 0, 0, imageSize, imageSize)
 
-        return try {
-            Log.d(TAG, "Starting image classification...")
-            Log.d(TAG, "Input bitmap size: ${bitmap.width}x${bitmap.height}")
-            
-            // Preprocess the image
-            var tensorImage = TensorImage.fromBitmap(bitmap)
-            tensorImage = imageProcessor!!.process(tensorImage)
-            Log.d(TAG, "Image preprocessed successfully")
-
-            // Prepare input and output buffers
-            val inputBuffer = tensorImage.buffer
-            val outputShape = interpreter!!.getOutputTensor(0).shape()
-            val output = Array(1) { FloatArray(outputShape[1]) }
-
-            // Run inference with timeout protection
-            Log.d(TAG, "Running inference...")
-            interpreter!!.run(inputBuffer, output)
-            Log.d(TAG, "Inference completed successfully")
-
-            // Process output
-            val predictions = output[0]
-            Log.d(TAG, "Raw predictions: ${predictions.take(5).joinToString()}")
-            val probabilities = softmax(predictions)
-
-            // Find the class with highest probability
-            val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
-            val confidence = probabilities[maxIndex]
-            val fruitName = if (maxIndex < labels.size) {
-                cleanFruitName(labels[maxIndex])
-            } else {
-                "Unknown"
+        var pixel = 0
+        for (i in 0 until imageSize) {
+            for (j in 0 until imageSize) {
+                val value = intValues[pixel++]
+                byteBuffer.putFloat(((value shr 16 and 0xFF) - 127.5f) / 127.5f)
+                byteBuffer.putFloat(((value shr 8 and 0xFF) - 127.5f) / 127.5f)
+                byteBuffer.putFloat(((value and 0xFF) - 127.5f) / 127.5f)
             }
-
-            Log.d(TAG, "Classification result: $fruitName with confidence $confidence (index: $maxIndex)")
-            ClassificationResult(fruitName, confidence)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Error during image classification", e)
-            e.printStackTrace()
-            ClassificationResult("Classification Error", 0.0f)
         }
-    }
-
-    private fun cleanFruitName(rawName: String): String {
-        return rawName
-            .replace(Regex("\\d+"), "")
-            .replace("_", " ")
-            .split(" ")[0]
-            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-    }
-
-    private fun softmax(input: FloatArray): FloatArray {
-        val maxVal = input.maxOrNull() ?: 0f
-        val exps = input.map { exp((it - maxVal).toDouble()).toFloat() }
-        val sumExps = exps.sum()
-        return exps.map { it / sumExps }.toFloatArray()
+        return byteBuffer
     }
 
     fun close() {
-        try {
-            interpreter?.close()
-            interpreter = null
-            Log.d(TAG, "FruitClassifier closed successfully")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error closing FruitClassifier", e)
-        }
+        interpreter?.close()
     }
 }
+
+data class ClassificationResult(
+    val fruitName: String,
+    val confidence: Float
+)
