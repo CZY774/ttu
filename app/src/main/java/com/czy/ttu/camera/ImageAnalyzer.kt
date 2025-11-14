@@ -16,7 +16,9 @@ class ImageAnalyzer(
     private var onAnalysisComplete: () -> Unit
 ) : ImageAnalysis.Analyzer {
 
+    @Volatile
     private var shouldAnalyze = false
+    @Volatile
     private var dynamicAnalysisCompleteCallback: (() -> Unit)? = null
 
     fun updateCallbacks(
@@ -28,6 +30,7 @@ class ImageAnalyzer(
     }
 
     fun triggerAnalysis(onComplete: (() -> Unit)? = null) {
+        android.util.Log.d("ImageAnalyzer", "triggerAnalysis called")
         shouldAnalyze = true
         dynamicAnalysisCompleteCallback = onComplete
     }
@@ -42,25 +45,35 @@ class ImageAnalyzer(
                 val localOnComplete = onAnalysisComplete
                 dynamicAnalysisCompleteCallback = null
                 
-                try {
-                    val bitmap = imageProxyToBitmap(image)
-                    if (bitmap != null) {
-                        android.util.Log.d("ImageAnalyzer", "Bitmap created, classifying...")
-                        val result = fruitClassifier.classifyImage(bitmap)
-                        android.util.Log.d("ImageAnalyzer", "Classification result: ${result.fruitName}, confidence: ${result.confidence}")
-                        
-                        if (result.confidence > 0.3f) {
-                            onDetection(result.fruitName, result.confidence)
-                        }
-                    } else {
-                        android.util.Log.e("ImageAnalyzer", "Failed to create bitmap from image")
-                    }
+                // Convert image to bitmap BEFORE closing
+                val bitmap = try {
+                    imageProxyToBitmap(image)
                 } catch (e: Exception) {
-                    android.util.Log.e("ImageAnalyzer", "Analysis failed", e)
-                } finally {
-                    android.util.Log.d("ImageAnalyzer", "Analysis complete, calling callbacks")
-                    localCallback?.invoke()
-                    localOnComplete()
+                    android.util.Log.e("ImageAnalyzer", "Failed to convert image", e)
+                    null
+                }
+                
+                // Post to main thread to ensure callbacks work
+                android.os.Handler(android.os.Looper.getMainLooper()).post {
+                    try {
+                        if (bitmap != null) {
+                            android.util.Log.d("ImageAnalyzer", "Bitmap created, classifying...")
+                            val result = fruitClassifier.classifyImage(bitmap)
+                            android.util.Log.d("ImageAnalyzer", "Classification result: ${result.fruitName}, confidence: ${result.confidence}")
+                            
+                            if (result.confidence > 0.3f) {
+                                onDetection(result.fruitName, result.confidence)
+                            }
+                        } else {
+                            android.util.Log.e("ImageAnalyzer", "Failed to create bitmap from image")
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("ImageAnalyzer", "Analysis failed", e)
+                    } finally {
+                        android.util.Log.d("ImageAnalyzer", "Analysis complete, calling callbacks")
+                        localCallback?.invoke()
+                        localOnComplete()
+                    }
                 }
             }
         } finally {
