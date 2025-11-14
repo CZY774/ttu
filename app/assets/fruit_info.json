@@ -1,0 +1,130 @@
+{
+  "Apel": {
+    "fun_fact": "Apel mengapung di air karena 25% bagiannya adalah udara! 🍎",
+    "vitamin": "Vitamin C dan Serat",
+    "warna": "Merah, Hijau, atau Kuning",
+    "manfaat": "Menjaga kesehatan jantung dan pencernaan",
+    "asal": "Asia Tengah",
+    "fakta_tambahan": "Ada lebih dari 7.500 jenis apel di dunia!"
+  },
+  "Pisang": {
+    "fun_fact": "Pisang adalah buah berry raksasa! Strawberry bukan berry tapi pisang adalah berry! 🍌",
+    "vitamin": "Kalium dan Vitamin B6",
+    "warna": "Kuning",
+    "manfaat": "Memberikan energi dan menjaga kesehatan otot",
+    "asal": "Asia Tenggara",
+    "fakta_tambahan": "Pisang bisa membantu kamu tidur lebih nyenyak!"
+  },
+  "Jeruk": {
+    "fun_fact": "Jeruk pertama kali ditemukan di China lebih dari 4.000 tahun yang lalu! 🍊",
+    "vitamin": "Vitamin C",
+    "warna": "Oranye",
+    "manfaat": "Meningkatkan daya tahan tubuh",
+    "asal": "China",
+    "fakta_tambahan": "Satu buah jeruk bisa memenuhi kebutuhan vitamin C harian kamu!"
+  },
+  "Mangga": {
+    "fun_fact": "Mangga adalah buah nasional India, Pakistan, dan Filipina! 🥭",
+    "vitamin": "Vitamin A dan Vitamin C",
+    "warna": "Kuning atau Hijau",
+    "manfaat": "Baik untuk kesehatan mata dan kulit",
+    "asal": "India",
+    "fakta_tambahan": "Pohon mangga bisa hidup sampai 300 tahun!"
+  },
+  "Anggur": {
+    "fun_fact": "Ada lebih dari 8.000 jenis anggur di dunia! 🍇",
+    "vitamin": "Vitamin C dan K",
+    "warna": "Ungu, Hijau, atau Merah",
+    "manfaat": "Mengandung antioksidan yang baik untuk tubuh",
+    "asal": "Timur Tengah",
+    "fakta_tambahan": "Anggur sudah ditanam manusia sejak 6.000 tahun yang lalu!"
+  },
+  "Semangka": {
+    "fun_fact": "Semangka 92% terdiri dari air! Sempurna untuk cuaca panas! 🍉",
+    "vitamin": "Vitamin A dan C",
+    "warna": "Hijau di luar, Merah di dalam",
+    "manfaat": "Menjaga tubuh tetap terhidrasi",
+    "asal": "Afrika",
+    "fakta_tambahan": "Semua bagian semangka bisa dimakan, termasuk kulitnya!"
+  },
+  "Pepaya": {
+    "fun_fact": "Pepaya dapat membantu pencernaan karena mengandung enzim papain! 🍈",
+    "vitamin": "Vitamin C dan Folat",
+    "warna": "Oranye",
+    "manfaat": "Melancarkan pencernaan",
+    "asal": "Amerika Tengah",
+    "fakta_tambahan": "Pepaya mentah bisa digunakan sebagai pelembut daging!"
+  },
+  "Jambu": {
+    "fun_fact": "Jambu biji mengandung vitamin C 4 kali lebih banyak dari jeruk! 🍐",
+    "vitamin": "Vitamin C",
+    "warna": "Hijau atau Merah",
+    "manfaat": "Meningkatkan kekebalan tubuh",
+    "asal": "Amerika Selatan",
+    "fakta_tambahan": "Jambu bisa membantu menurunkan kadar gula darah!"
+  },
+  "Nanas": {
+    "fun_fact": "Nanas membutuhkan 2 tahun untuk tumbuh menjadi buah yang matang! 🍍",
+    "vitamin": "Vitamin C dan Mangan",
+    "warna": "Kuning",
+    "manfaat": "Mengandung enzim yang membantu pencernaan",
+    "asal": "Amerika Selatan",
+    "fakta_tambahan": "Nanas tidak bisa matang setelah dipetik!"
+  },
+  "Strawberry": {
+    "fun_fact": "Strawberry adalah satu-satunya buah yang bijinya ada di luar! 🍓",
+    "vitamin": "Vitamin C",
+    "warna": "Merah",
+    "manfaat": "Baik untuk kesehatan jantung",
+    "asal": "Eropa",
+    "fakta_tambahan": "Satu strawberry punya sekitar 200 biji!"
+  },
+  "Melon": {
+    "fun_fact": "Melon termasuk keluarga yang sama dengan mentimun dan labu! 🍈",
+    "vitamin": "Vitamin A dan C",
+    "warna": "Oranye atau Hijau",
+    "manfaat": "Menjaga kesehatan mata",
+    "asal": "Afrika dan Timur Tengah",
+    "fakta_tambahan": "Melon 90% terdiri dari air!"
+  },
+  "Alpukat": {
+    "fun_fact": "Alpukat sebenarnya adalah buah berry dengan biji besar! 🥑",
+    "vitamin": "Vitamin E dan K",
+    "warna": "Hijau",
+    "manfaat": "Mengandung lemak sehat yang baik untuk tubuh",
+    "asal": "Meksiko",
+    "fakta_tambahan": "Alpukat punya lebih banyak kalium daripada pisang!"
+  },
+  "Kelengkeng": {
+    "fun_fact": "Nama 'kelengkeng' berarti 'mata naga' dalam bahasa China! 🐉",
+    "vitamin": "Vitamin C",
+    "warna": "Cokelat di luar, Putih di dalam",
+    "manfaat": "Memberikan energi dan menyegarkan",
+    "asal": "China",
+    "fakta_tambahan": "Kelengkeng bisa membantu kamu tidur lebih nyenyak!"
+  },
+  "Rambutan": {
+    "fun_fact": "Nama 'rambutan' berasal dari kata 'rambut' karena kulitnya yang berbulu! 🔴",
+    "vitamin": "Vitamin C",
+    "warna": "Merah atau Kuning",
+    "manfaat": "Meningkatkan sistem kekebalan tubuh",
+    "asal": "Asia Tenggara",
+    "fakta_tambahan": "Rambutan adalah saudara dari leci dan kelengkeng!"
+  },
+  "Pir": {
+    "fun_fact": "Buah pir mengandung lebih banyak serat daripada kebanyakan buah populer lainnya! 🍐",
+    "vitamin": "Vitamin C dan K",
+    "warna": "Hijau atau Kuning",
+    "manfaat": "Melancarkan pencernaan dan menjaga kesehatan jantung",
+    "asal": "Eropa dan Asia Barat",
+    "fakta_tambahan": "Pir tetap matang dari dalam ke luar setelah dipetik!"
+  },
+  "Salak": {
+    "fun_fact": "Disebut 'snake fruit' karena kulitnya mirip sisik ular! 🐍",
+    "vitamin": "Vitamin C dan Serat",
+    "warna": "Cokelat",
+    "manfaat": "Baik untuk pencernaan dan meningkatkan energi",
+    "asal": "Indonesia",
+    "fakta_tambahan": "Salak Bali terkenal lebih manis dan renyah!"
+  }
+}
