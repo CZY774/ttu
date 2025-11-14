@@ -1,5 +1,15 @@
 package com.czy.ttu.ui.screens
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Cameraswitch
-import androidx.compose.material.icons.filled.FlashOff
-import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,16 +42,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.czy.ttu.data.repository.FruitRepository
-import com.czy.ttu.ui.components.CameraPreview
+import com.czy.ttu.ml.FruitClassifier
 import com.czy.ttu.ui.theme.CameraOverlay
 import com.czy.ttu.ui.theme.FruitGreen
 import com.czy.ttu.ui.theme.FruitOrange
@@ -53,19 +66,82 @@ import com.czy.ttu.ui.theme.FruitYellow
 import com.czy.ttu.ui.theme.TextDark
 import com.czy.ttu.ui.theme.TextLight
 import com.czy.ttu.ui.theme.White
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CameraScreen(
     onBack: () -> Unit
 ) {
-    var isFlashOn by remember { mutableStateOf(false) }
-    var isFrontCamera by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    
+    var capturedImage by remember { mutableStateOf<Bitmap?>(null) }
     var detectedFruit by remember { mutableStateOf<String?>(null) }
     var confidence by remember { mutableFloatStateOf(0f) }
     var isAnalyzing by remember { mutableStateOf(false) }
-    var triggerCapture by remember { mutableStateOf(0) }
+    
+    val fruitClassifier = remember { 
+        try {
+            FruitClassifier(context)
+        } catch (e: Exception) {
+            android.util.Log.e("CameraScreen", "Failed to init classifier", e)
+            android.widget.Toast.makeText(context, "Classifier init failed: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+            null
+        }
+    }
 
     val fruitRepository = remember { FruitRepository() }
+    
+    // Camera launcher
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            if (imageBitmap != null) {
+                // Process image
+                val dimension = minOf(imageBitmap.width, imageBitmap.height)
+                val croppedImage = ThumbnailUtils.extractThumbnail(imageBitmap, dimension, dimension)
+                capturedImage = croppedImage
+                
+                // Classify
+                isAnalyzing = true
+                scope.launch {
+                    try {
+                        val scaledImage = Bitmap.createScaledBitmap(croppedImage, 224, 224, false)
+                        val result = withContext(Dispatchers.Default) {
+                            fruitClassifier?.classifyImage(scaledImage)
+                        }
+                        
+                        if (result != null) {
+                            detectedFruit = result.fruitName
+                            confidence = result.confidence
+                            android.util.Log.d("CameraScreen", "Detected: ${result.fruitName}, ${result.confidence}")
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("CameraScreen", "Classification error", e)
+                        android.widget.Toast.makeText(context, "Error: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                    } finally {
+                        isAnalyzing = false
+                    }
+                }
+            }
+        }
+    }
+    
+    // Permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            cameraLauncher.launch(cameraIntent)
+        } else {
+            android.widget.Toast.makeText(context, "Camera permission required", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
 
     // Clear detection after 5 seconds
     LaunchedEffect(detectedFruit) {
@@ -76,39 +152,41 @@ fun CameraScreen(
         }
     }
 
-    // Timeout for analysis - reset loading state after 8 seconds as fallback
-    LaunchedEffect(triggerCapture) {
-        if (triggerCapture > 0) {
-            kotlinx.coroutines.delay(8000)
-            if (isAnalyzing) {
-                android.util.Log.w("CameraScreen", "Analysis timeout - forcing completion")
-                isAnalyzing = false
-            }
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // Camera Preview
-        CameraPreview(
-            modifier = Modifier.fillMaxSize(),
-            isFlashOn = isFlashOn,
-            isFrontCamera = isFrontCamera,
-            triggerCapture = triggerCapture,
-            onDetection = { fruit, conf ->
-                android.util.Log.d("CameraScreen", "Detection received: $fruit, confidence: $conf")
-                detectedFruit = fruit
-                confidence = conf
-                isAnalyzing = false
-            },
-            onAnalysisComplete = {
-                android.util.Log.d("CameraScreen", "Analysis complete callback received")
-                isAnalyzing = false
+        // Show captured image or placeholder
+        if (capturedImage != null) {
+            Image(
+                bitmap = capturedImage!!.asImageBitmap(),
+                contentDescription = "Captured Image",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            // Placeholder when no image captured
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "📷",
+                        style = MaterialTheme.typography.displayLarge.copy(fontSize = 80.sp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Tap camera button to capture",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = White
+                    )
+                }
             }
-        )
+        }
 
         // Top Bar
         Row(
@@ -141,81 +219,11 @@ fun CameraScreen(
                 style = MaterialTheme.typography.titleLarge,
                 color = White
             )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Flash Toggle
-                IconButton(
-                    onClick = { isFlashOn = !isFlashOn },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            color = if (isFlashOn) FruitYellow else Color.Gray.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = if (isFlashOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                        contentDescription = "Flash",
-                        tint = if (isFlashOn) Color.Black else White
-                    )
-                }
-
-                // Camera Switch
-                IconButton(
-                    onClick = { isFrontCamera = !isFrontCamera },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            color = Color.Gray.copy(alpha = 0.7f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Cameraswitch,
-                        contentDescription = "Switch Camera",
-                        tint = White
-                    )
-                }
-            }
+            
+            Spacer(modifier = Modifier.size(48.dp))
         }
 
-        // Detection Instruction - only show when no fruit detected
-        if (detectedFruit == null) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .background(
-                        color = CameraOverlay,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .padding(24.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "📷",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontSize = 64.sp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Point at a fruit!",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = White,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Arahkan kamera ke buah-buahan",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = White.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
+
 
         // Capture Button
         Box(
@@ -226,10 +234,14 @@ fun CameraScreen(
         ) {
             IconButton(
                 onClick = { 
-                    android.util.Log.d("CameraScreen", "Capture button clicked")
-                    isAnalyzing = true
-                    triggerCapture++
-                    android.util.Log.d("CameraScreen", "Analysis started, triggerCapture: $triggerCapture")
+                    // Check camera permission
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) 
+                        == PackageManager.PERMISSION_GRANTED) {
+                        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        cameraLauncher.launch(cameraIntent)
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
                 },
                 modifier = Modifier
                     .size(80.dp)
