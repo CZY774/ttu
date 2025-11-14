@@ -66,7 +66,6 @@ fun CameraScreen() {
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp),
-                lensFacing = lensFacing,
                 flashEnabled = flashEnabled,
                 onSwitchCamera = { 
                     lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) 
