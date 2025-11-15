@@ -68,8 +68,8 @@ class FruitClassifier(private val context: Context) {
         bitmap.getPixels(intValues, 0, imageSize, 0, 0, imageSize, imageSize)
 
         var pixel = 0
-        for (i in 0 until imageSize) {
-            for (j in 0 until imageSize) {
+        for (_i in 0 until imageSize) {
+            for (_j in 0 until imageSize) {
                 val value = intValues[pixel++]
                 byteBuffer.putFloat(((value shr 16 and 0xFF) - 127.5f) / 127.5f)
                 byteBuffer.putFloat(((value shr 8 and 0xFF) - 127.5f) / 127.5f)
