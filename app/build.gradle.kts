@@ -111,7 +111,7 @@ dependencies {
     // TensorFlow Lite GPU delegate
     implementation(libs.tensorflow.lite.gpu)
     // Gson for JSON parsing
-    implementation("com.google.code.gson:gson:2.13.2")
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
