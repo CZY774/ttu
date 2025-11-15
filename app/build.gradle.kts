@@ -92,18 +92,10 @@ dependencies {
     implementation(libs.accompanist.permissions)
     // For Jetpack Compose Foundation (core building blocks, theming, and layout system)
     implementation(libs.androidx.compose.foundation)
-    // CameraX Lifecycle
+    // CameraX
     implementation(libs.camera.lifecycle)
-    // CameraX Camera2 implementation
     implementation(libs.camera.camera2)
-    // CameraX View utilities
     implementation(libs.camera.view)
-    // CameraX Lifecycle (appears to be an alternative alias or duplicate)
-    implementation(libs.x.androidx.camera.lifecycle)
-    // CameraX Camera2 implementation (appears to be an alternative alias or duplicate)
-    implementation(libs.x.androidx.camera.camera2)
-    // CameraX View utilities (appears to be an alternative alias or duplicate)
-    implementation(libs.x.androidx.camera.view)
     // TensorFlow Lite for on-device machine learning
     implementation(libs.tensorflow.lite)
     // TensorFlow Lite support library
