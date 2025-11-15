@@ -16,7 +16,7 @@ class FruitRepository(private val context: Context) {
                 .use { it.readText() }
             val type = object : TypeToken<Map<String, FruitInfo>>() {}.type
             Gson().fromJson(json, type)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyMap()
         }
     }
