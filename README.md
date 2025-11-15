@@ -392,4 +392,4 @@ Jika Anda adalah **AI Agent/Future Developer** yang akan melanjutkan project ini
 
 ---
 
-*Last updated: January 2025*
+*Last updated: November 2025*
