@@ -1,10 +1,14 @@
 package com.czy.ttu.data
 
+import com.google.gson.annotations.SerializedName
+
 data class FruitInfo(
-    val fun_fact: String,
+    @SerializedName("fun_fact")
+    val funFact: String,
     val vitamin: String,
     val warna: String,
     val manfaat: String,
     val asal: String,
-    val fakta_tambahan: String
+    @SerializedName("fakta_tambahan")
+    val faktaTambahan: String
 )
