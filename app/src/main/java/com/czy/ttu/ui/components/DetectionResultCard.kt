@@ -55,7 +55,7 @@ fun DetectionResultCard(
             
             fruitInfo?.let { info ->
                 Text(
-                    text = info.fun_fact,
+                    text = info.funFact,
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 18.sp,
                     lineHeight = 24.sp
