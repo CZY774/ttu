@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Base.Theme.TTU" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/fruit_green</item>
         <item name="colorPrimaryVariant">@color/fruit_green_dark</item>
