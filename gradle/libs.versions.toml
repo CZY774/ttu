@@ -1,6 +1,6 @@
 [versions]
 accompanistPermissions = "0.37.3"
-agp = "8.13.1"
+agp = "8.7.3"
 cameraExtensions = "1.5.1"
 animation = "1.9.4"
 foundation = "1.9.4"
