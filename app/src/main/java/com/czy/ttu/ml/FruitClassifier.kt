@@ -61,7 +61,7 @@ class FruitClassifier(private val context: Context) {
     }
 
     private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(4 * imageSize * imageSize * 3)
+        val byteBuffer = ByteBuffer.allocateDirect(imageSize * imageSize * 3)
         byteBuffer.order(ByteOrder.nativeOrder())
 
         val intValues = IntArray(imageSize * imageSize)
@@ -71,9 +71,9 @@ class FruitClassifier(private val context: Context) {
         for (_i in 0 until imageSize) {
             for (_j in 0 until imageSize) {
                 val value = intValues[pixel++]
-                byteBuffer.putFloat(((value shr 16 and 0xFF) - 127.5f) / 127.5f)
-                byteBuffer.putFloat(((value shr 8 and 0xFF) - 127.5f) / 127.5f)
-                byteBuffer.putFloat(((value and 0xFF) - 127.5f) / 127.5f)
+                byteBuffer.put(((value shr 16 and 0xFF)))
+                byteBuffer.put(((value shr 8 and 0xFF)))
+                byteBuffer.put(((value and 0xFF)))
             }
         }
         return byteBuffer
