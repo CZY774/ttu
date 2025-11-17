@@ -71,9 +71,9 @@ class FruitClassifier(private val context: Context) {
         for (_i in 0 until imageSize) {
             for (_j in 0 until imageSize) {
                 val value = intValues[pixel++]
-                byteBuffer.put(((value shr 16 and 0xFF)))
-                byteBuffer.put(((value shr 8 and 0xFF)))
-                byteBuffer.put(((value and 0xFF)))
+                byteBuffer.put((value shr 16 and 0xFF).toByte())
+                byteBuffer.put((value shr 8 and 0xFF).toByte())
+                byteBuffer.put((value and 0xFF).toByte())
             }
         }
         return byteBuffer
