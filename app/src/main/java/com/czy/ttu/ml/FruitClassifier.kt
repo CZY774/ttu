@@ -46,11 +46,11 @@ class FruitClassifier(private val context: Context) {
     fun classify(bitmap: Bitmap): ClassificationResult {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, true)
         val input = preprocessImage(resizedBitmap)
-        val output = Array(1) { FloatArray(labels.size) }
+        val output = Array(1) { ByteArray(labels.size) }
 
         interpreter?.run(input, output)
 
-        val probabilities = output[0]
+        val probabilities = output[0].map { (it.toInt() and 0xFF) / 255f }
         val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
         val confidence = probabilities[maxIndex]
 
