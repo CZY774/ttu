@@ -50,7 +50,13 @@ class FruitClassifier(private val context: Context) {
 
         interpreter?.run(input, output)
 
-        val probabilities = output[0].map { (it.toInt() and 0xFF) / 255f }
+        // Dequantize output: scale * (value - zero_point)
+        // Untuk quantized model, biasanya scale = 0.00390625, zero_point = 0
+        val probabilities = output[0].map { 
+            val unsignedValue = (it.toInt() and 0xFF)
+            unsignedValue / 255f  // Normalize to [0, 1]
+        }
+        
         val maxIndex = probabilities.indices.maxByOrNull { probabilities[it] } ?: 0
         val confidence = probabilities[maxIndex]
 
@@ -71,9 +77,17 @@ class FruitClassifier(private val context: Context) {
         for (_i in 0 until imageSize) {
             for (_j in 0 until imageSize) {
                 val value = intValues[pixel++]
-                byteBuffer.put((value shr 16 and 0xFF).toByte())
-                byteBuffer.put((value shr 8 and 0xFF).toByte())
-                byteBuffer.put((value and 0xFF).toByte())
+                
+                // Extract RGB values (0-255)
+                val r = (value shr 16 and 0xFF)
+                val g = (value shr 8 and 0xFF)
+                val b = (value and 0xFF)
+                
+                // For quantized UINT8 model: just put raw pixel values
+                // Model will handle normalization internally
+                byteBuffer.put(r.toByte())
+                byteBuffer.put(g.toByte())
+                byteBuffer.put(b.toByte())
             }
         }
         return byteBuffer
