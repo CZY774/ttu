@@ -16,6 +16,10 @@
 local.properties
 INSTRUCTIONS.md
 dataset_preparation.py
-inspect_dataset.py
-test_tflite_inference.py
 train_fruit_model.py
+convert_keras_to_tflite.py
+quick_val_test.py
+test_tflite_inference.py
+test_android_model.py
+test_correct_dataset.py
+test_float32.py
