@@ -1,101 +1,10 @@
 {
-  "Salak": {
-    "fun_fact": "Kulit salak seperti sisik ular! 🐍",
-    "vitamin": "Vitamin C",
-    "warna": "Cokelat",
-    "manfaat": "Baik untuk pencernaan",
-    "asal": "Indonesia"
-  },
-  "Jambu": {
-    "fun_fact": "Jambu punya vitamin C sangat banyak! 🍐",
-    "vitamin": "Vitamin C",
-    "warna": "Hijau atau Merah",
-    "manfaat": "Membuat tubuh kuat",
-    "asal": "Amerika Selatan"
-  },
-  "Pepaya": {
-    "fun_fact": "Pepaya membantu perut bekerja dengan baik! 🍈",
-    "vitamin": "Vitamin C",
-    "warna": "Oranye",
-    "manfaat": "Baik untuk pencernaan",
-    "asal": "Amerika Tengah"
-  },
-  "Alpukat": {
-    "fun_fact": "Alpukat adalah buah dengan biji besar! 🥑",
-    "vitamin": "Vitamin E dan K",
-    "warna": "Hijau",
-    "manfaat": "Baik untuk energi tubuh",
-    "asal": "Meksiko"
-  },
-  "Anggur": {
-    "fun_fact": "Jenis anggur ada ribuan macam! 🍇",
-    "vitamin": "Vitamin C dan K",
-    "warna": "Ungu, Hijau, atau Merah",
-    "manfaat": "Baik untuk tubuh",
-    "asal": "Timur Tengah"
-  },
-  "Jeruk": {
-    "fun_fact": "Jeruk sudah dimakan sejak ribuan tahun lalu! 🍊",
-    "vitamin": "Vitamin C",
-    "warna": "Oranye",
-    "manfaat": "Membuat tubuh tidak mudah sakit",
-    "asal": "China"
-  },
-  "Melon": {
-    "fun_fact": "Melon masih satu keluarga dengan mentimun! 🍈",
-    "vitamin": "Vitamin A dan C",
-    "warna": "Oranye atau Hijau",
-    "manfaat": "Baik untuk mata",
-    "asal": "Afrika dan Timur Tengah"
-  },
-  "Strawberry": {
-    "fun_fact": "Biji strawberry ada di luar buahnya! 🍓",
-    "vitamin": "Vitamin C",
-    "warna": "Merah",
-    "manfaat": "Baik untuk jantung",
-    "asal": "Eropa"
-  },
-  "Semangka": {
-    "fun_fact": "Semangka hampir seluruhnya air! 🍉",
-    "vitamin": "Vitamin A dan C",
-    "warna": "Merah di dalam, Hijau di luar",
-    "manfaat": "Membuat tubuh segar",
-    "asal": "Afrika"
-  },
-  "Kelengkeng": {
-    "fun_fact": "Bentuk kelengkeng seperti mata naga! 🐉",
-    "vitamin": "Vitamin C",
-    "warna": "Cokelat di luar, Putih di dalam",
-    "manfaat": "Menambah energi",
-    "asal": "China"
-  },
   "Apel": {
     "fun_fact": "Apel bisa mengapung di air karena ada udara di dalamnya! 🍎",
     "vitamin": "Vitamin C",
     "warna": "Merah, Hijau, atau Kuning",
     "manfaat": "Baik untuk tubuh dan perut",
     "asal": "Asia Tengah"
-  },
-  "Nanas": {
-    "fun_fact": "Nanas butuh waktu lama untuk tumbuh! 🍍",
-    "vitamin": "Vitamin C",
-    "warna": "Kuning",
-    "manfaat": "Baik untuk perut",
-    "asal": "Amerika Selatan"
-  },
-  "Rambutan": {
-    "fun_fact": "Namanya rambutan karena kulitnya seperti rambut! 🔴",
-    "vitamin": "Vitamin C",
-    "warna": "Merah atau Kuning",
-    "manfaat": "Baik untuk daya tahan tubuh",
-    "asal": "Asia Tenggara"
-  },
-  "Mangga": {
-    "fun_fact": "Mangga jadi buah favorit di banyak negara! 🥭",
-    "vitamin": "Vitamin A dan C",
-    "warna": "Kuning atau Hijau",
-    "manfaat": "Baik untuk mata dan kulit",
-    "asal": "India"
   },
   "Pisang": {
     "fun_fact": "Pisang termasuk buah berry, lho! 🍌",
@@ -104,11 +13,137 @@
     "manfaat": "Memberi energi dan kuatkan otot",
     "asal": "Asia Tenggara"
   },
+  "Jeruk": {
+    "fun_fact": "Jeruk sudah dimakan sejak ribuan tahun lalu! 🍊",
+    "vitamin": "Vitamin C",
+    "warna": "Oranye",
+    "manfaat": "Membuat tubuh tidak mudah sakit",
+    "asal": "China"
+  },
+  "Mangga": {
+    "fun_fact": "Mangga jadi buah favorit di banyak negara! 🥭",
+    "vitamin": "Vitamin A dan C",
+    "warna": "Kuning atau Hijau",
+    "manfaat": "Baik untuk mata dan kulit",
+    "asal": "India"
+  },
+  "Anggur": {
+    "fun_fact": "Jenis anggur ada ribuan macam! 🍇",
+    "vitamin": "Vitamin C dan K",
+    "warna": "Ungu, Hijau, atau Merah",
+    "manfaat": "Baik untuk tubuh",
+    "asal": "Timur Tengah"
+  },
+  "Semangka": {
+    "fun_fact": "Semangka hampir seluruhnya air! 🍉",
+    "vitamin": "Vitamin A dan C",
+    "warna": "Merah di dalam, Hijau di luar",
+    "manfaat": "Membuat tubuh segar",
+    "asal": "Afrika"
+  },
+  "Pepaya": {
+    "fun_fact": "Pepaya membantu perut bekerja dengan baik! 🍈",
+    "vitamin": "Vitamin C",
+    "warna": "Oranye",
+    "manfaat": "Baik untuk pencernaan",
+    "asal": "Amerika Tengah"
+  },
+  "Jambu": {
+    "fun_fact": "Jambu punya vitamin C sangat banyak! 🍐",
+    "vitamin": "Vitamin C",
+    "warna": "Hijau atau Merah",
+    "manfaat": "Membuat tubuh kuat",
+    "asal": "Amerika Selatan"
+  },
+  "Nanas": {
+    "fun_fact": "Nanas butuh waktu lama untuk tumbuh! 🍍",
+    "vitamin": "Vitamin C",
+    "warna": "Kuning",
+    "manfaat": "Baik untuk perut",
+    "asal": "Amerika Selatan"
+  },
+  "Strawberry": {
+    "fun_fact": "Biji strawberry ada di luar buahnya! 🍓",
+    "vitamin": "Vitamin C",
+    "warna": "Merah",
+    "manfaat": "Baik untuk jantung",
+    "asal": "Eropa"
+  },
+  "Rambutan": {
+    "fun_fact": "Namanya rambutan karena kulitnya seperti rambut! 🔴",
+    "vitamin": "Vitamin C",
+    "warna": "Merah atau Kuning",
+    "manfaat": "Baik untuk daya tahan tubuh",
+    "asal": "Asia Tenggara"
+  },
+  "Kelengkeng": {
+    "fun_fact": "Bentuk kelengkeng seperti mata naga! 🐉",
+    "vitamin": "Vitamin C",
+    "warna": "Cokelat di luar, Putih di dalam",
+    "manfaat": "Menambah energi",
+    "asal": "China"
+  },
+  "Salak": {
+    "fun_fact": "Kulit salak seperti sisik ular! 🐍",
+    "vitamin": "Vitamin C",
+    "warna": "Cokelat",
+    "manfaat": "Baik untuk pencernaan",
+    "asal": "Indonesia"
+  },
+  "Alpukat": {
+    "fun_fact": "Alpukat adalah buah dengan biji besar! 🥑",
+    "vitamin": "Vitamin E dan K",
+    "warna": "Hijau",
+    "manfaat": "Baik untuk energi tubuh",
+    "asal": "Meksiko"
+  },
+  "Melon": {
+    "fun_fact": "Melon masih satu keluarga dengan mentimun! 🍈",
+    "vitamin": "Vitamin A dan C",
+    "warna": "Oranye atau Hijau",
+    "manfaat": "Baik untuk mata",
+    "asal": "Afrika dan Timur Tengah"
+  },
   "Pir": {
     "fun_fact": "Pir rasanya manis dan segar! 🍐",
     "vitamin": "Vitamin C dan K",
     "warna": "Hijau atau Kuning",
     "manfaat": "Baik untuk perut",
     "asal": "Eropa dan Asia Barat"
+  },
+  "Durian": {
+    "fun_fact": "Durian adalah raja buah dengan bau khas! 👑",
+    "vitamin": "Vitamin C dan B",
+    "warna": "Kuning di dalam, Hijau di luar",
+    "manfaat": "Memberi energi banyak",
+    "asal": "Asia Tenggara"
+  },
+  "Manggis": {
+    "fun_fact": "Manggis disebut ratu buah! 👸",
+    "vitamin": "Vitamin C",
+    "warna": "Ungu di luar, Putih di dalam",
+    "manfaat": "Baik untuk daya tahan tubuh",
+    "asal": "Asia Tenggara"
+  },
+  "Kelapa": {
+    "fun_fact": "Kelapa bisa mengapung di laut! 🥥",
+    "vitamin": "Vitamin C dan B",
+    "warna": "Cokelat atau Hijau",
+    "manfaat": "Membuat tubuh segar",
+    "asal": "Asia Tenggara"
+  },
+  "Belimbing": {
+    "fun_fact": "Kalau dipotong, belimbing bentuknya seperti bintang! ⭐",
+    "vitamin": "Vitamin C",
+    "warna": "Kuning atau Hijau",
+    "manfaat": "Baik untuk pencernaan",
+    "asal": "Asia Tenggara"
+  },
+  "Tomat": {
+    "fun_fact": "Tomat sebenarnya adalah buah, bukan sayur! 🍅",
+    "vitamin": "Vitamin C dan K",
+    "warna": "Merah, Kuning, atau Hijau",
+    "manfaat": "Baik untuk mata dan kulit",
+    "asal": "Amerika Selatan"
   }
 }
