@@ -21,9 +21,10 @@ Aplikasi Android edukasi yang dapat mendeteksi 15 jenis buah-buahan secara real-
 
 ### 🍓 Buah yang Dapat Dideteksi (15 jenis):
 ```
-Apel, Pisang, Jeruk, Mangga, Anggur, Semangka, 
-Pepaya, Jambu, Nanas, Strawberry, Melon, 
-Alpukat, Kelengkeng, Rambutan, Durian
+Alpukat, Anggur, Apel, Belimbing, Durian,
+Jambu, Jeruk, Kelapa, Kelengkeng, Mangga,
+Manggis, Melon, Nanas, Pepaya, Pir,
+Pisang, Rambutan, Salak, Semangka, Strawberry, Tomat
 ```
 
 ---
