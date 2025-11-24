@@ -4,7 +4,7 @@ Dataset Preparation Script - Multi Dataset Version
 Menggabungkan berbagai dataset buah menjadi satu dataset terstruktur
 untuk training model deteksi buah anak SD.
 
-Target: 20 jenis buah dengan nama Indonesia
+Target: 21 jenis buah dengan nama Indonesia
 """
 
 import os
