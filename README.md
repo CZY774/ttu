@@ -9,7 +9,7 @@
 
 ## 📱 Tentang Aplikasi
 
-Aplikasi Android edukasi yang dapat mendeteksi 15 jenis buah-buahan secara real-time menggunakan kamera dan teknologi Image Detection berbasis Machine Learning (TensorFlow Lite).
+Aplikasi Android edukasi yang dapat mendeteksi 21 jenis buah-buahan secara real-time menggunakan kamera dan teknologi Image Detection berbasis Machine Learning (TensorFlow Lite).
 
 ### ✨ Fitur Utama:
 - ✅ Deteksi buah real-time menggunakan kamera
@@ -19,7 +19,7 @@ Aplikasi Android edukasi yang dapat mendeteksi 15 jenis buah-buahan secara real-
 - ✅ Fun facts edukatif tentang setiap buah
 - ✅ UI sederhana dan ramah anak
 
-### 🍓 Buah yang Dapat Dideteksi (15 jenis):
+### 🍓 Buah yang Dapat Dideteksi (21 jenis):
 ```
 Alpukat, Anggur, Apel, Belimbing, Durian,
 Jambu, Jeruk, Kelapa, Kelengkeng, Mangga,
@@ -37,34 +37,42 @@ Pisang, Rambutan, Salak, Semangka, Strawberry, Tomat
 ├── INSTRUCTIONS.md                # Panduan lengkap untuk AI Agent/Developer
 ├── dataset_preparation.py         # Script persiapan dataset
 ├── train_fruit_model.py          # Script training model
-├── requirements.txt              # Python dependencies
+├── convert_keras_to_tflite.py    # Script konversi model ke TFLite
+├── test_android_model.py         # Script testing model Android
+├── model_metadata.json           # Metadata model yang sudah trained
 │
-├── app/                          # Android app code
+├── app/                          # Android app code (Kotlin + Jetpack Compose)
 │   ├── src/main/
-│   │   ├── java/.../
+│   │   ├── java/com/czy/ttu/
+│   │   │   ├── MainActivity.kt
+│   │   │   ├── data/
+│   │   │   │   ├── FruitInfo.kt
+│   │   │   │   └── FruitRepository.kt
+│   │   │   ├── ml/
+│   │   │   │   └── FruitClassifier.kt
+│   │   │   └── ui/
+│   │   │       ├── screens/
+│   │   │       │   └── CameraScreen.kt
+│   │   │       ├── components/
+│   │   │       │   ├── CameraPreview.kt
+│   │   │       │   ├── CameraControls.kt
+│   │   │       │   └── DetectionResultCard.kt
+│   │   │       └── theme/
+│   │   │           ├── Color.kt
+│   │   │           ├── Theme.kt
+│   │   │           └── Type.kt
 │   │   ├── assets/
-│   │   │   ├── fruit_model_quantized.tflite
+│   │   │   ├── fruit_detector_quantized.tflite  ⭐
 │   │   │   ├── class_names.json
 │   │   │   └── fruit_info.json
 │   │   └── res/
+│   │       └── font/
+│   │           └── inter_regular.ttf
 │   └── build.gradle.kts
 │
-├── fruit-dataset-prepared/       # Dataset hasil preparation
-│   ├── train/
-│   ├── val/
-│   ├── class_names.json
-│   ├── fruit_info.json
-│   └── dataset_summary.json
-│
-└── model_output/                 # Hasil training
-    ├── models/
-    │   ├── fruit_detector_best.keras
-    │   ├── fruit_detector_float32.tflite
-    │   ├── fruit_detector_float16.tflite
-    │   └── fruit_detector_quantized.tflite  ⭐
-    ├── plots/
-    ├── logs/
-    └── model_metadata.json
+└── [Dataset folders - not included in repo]
+    ├── fruit-dataset-full-varieties/  # Dataset hasil preparation
+    └── model_output/                  # Hasil training
 ```
 
 ---
@@ -76,7 +84,7 @@ Pisang, Rambutan, Salak, Semangka, Strawberry, Tomat
 ```bash
 # Clone repository
 git clone <your-repo-url>
-cd fruit-detection-app
+cd TTU
 
 # Create virtual environment (recommended)
 python -m venv venv
@@ -85,18 +93,7 @@ source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate  # Windows
 
 # Install dependencies
-pip install -r requirements.txt
-```
-
-**requirements.txt:**
-```
-tensorflow>=2.14.0
-numpy>=1.24.0
-matplotlib>=3.7.0
-scikit-learn>=1.3.0
-seaborn>=0.12.0
-kaggle>=1.5.16
-Pillow>=10.0.0
+pip install tensorflow numpy matplotlib scikit-learn pillow
 ```
 
 ### 2️⃣ Persiapan Dataset
@@ -105,55 +102,32 @@ Pillow>=10.0.0
 
 ```bash
 # STEP 1: Update path di dataset_preparation.py
-# Edit line 15-16:
-DATASET_BASE_DIR = "fruits-360-dataset/fruits-360_100x100/fruits-360"
-# Sesuaikan dengan lokasi dataset Anda!
+# Edit DATASET_PATHS sesuai lokasi dataset Anda
 
-# STEP 2 (Optional): Inspect dataset dulu
-python inspect_dataset.py
-# Menu:
-# - Option 3: Generate mapping untuk buah Indonesia
-# - Option 4: Lihat jumlah gambar per class
-# - Option 5: Check struktur dataset
-
-# STEP 3: Run preparation
+# STEP 2: Run preparation
 python dataset_preparation.py
 
 # Script akan:
 # ✅ Check dataset lokal (TIDAK download ulang)
-# ✅ Filter hanya 15 buah yang relevan
+# ✅ Filter 21 buah yang relevan
 # ✅ Reorganisasi dan rename ke Bahasa Indonesia
 # ✅ Balance dataset (250 gambar per class)
 # ✅ Generate class_names.json dan fruit_info.json
 ```
 
-**Struktur Dataset yang Dibutuhkan:**
-```
-fruits-360-dataset/
-└── fruits-360_100x100/
-    └── fruits-360/
-        ├── Training/
-        │   ├── Apple Braeburn/
-        │   ├── Banana/
-        │   └── ... (225 classes)
-        └── Test/
-            ├── Apple Braeburn/
-            ├── Banana/
-            └── ... (225 classes)
-```
-
 **Output:**
 ```
-fruit-dataset-prepared/
+fruit-dataset-full-varieties/
 ├── train/
 │   ├── Apel/        (250 images)
 │   ├── Pisang/      (250 images)
-│   └── ...
+│   └── ... (21 classes)
 ├── val/
 │   ├── Apel/        (62 images)
 │   ├── Pisang/      (62 images)
-│   └── ...
-└── class_names.json
+│   └── ... (21 classes)
+├── class_names.json
+└── fruit_info.json
 ```
 
 ### 3️⃣ Training Model
@@ -175,23 +149,26 @@ python train_fruit_model.py
 ```
 model_output/
 ├── models/
+│   ├── fruit_detector_best.keras
+│   ├── fruit_detector_float32.tflite
+│   ├── fruit_detector_float16.tflite
 │   └── fruit_detector_quantized.tflite  ⭐ (untuk Android)
 ├── plots/
 │   ├── training_history_[timestamp].png
 │   └── confusion_matrix_[timestamp].png
-└── class_names.json
+└── model_metadata.json
 ```
 
 ### 4️⃣ Setup Android Project
 
 ```bash
 # Buka Android Studio
-File > Open > pilih folder 'app'
+File > Open > pilih folder project root (TTU)
 
-# Copy file ke assets/
-cp model_output/models/fruit_detector_quantized.tflite app/src/main/assets/
-cp fruit-dataset-prepared/class_names.json app/src/main/assets/
-cp fruit-dataset-prepared/fruit_info.json app/src/main/assets/
+# Model sudah ada di app/src/main/assets/:
+# ✅ fruit_detector_quantized.tflite (3.5 MB)
+# ✅ class_names.json
+# ✅ fruit_info.json
 
 # Sync Gradle
 # Build > Make Project
@@ -202,15 +179,20 @@ cp fruit-dataset-prepared/fruit_info.json app/src/main/assets/
 
 ---
 
-## 📊 Target Akurasi
+## 📊 Model Performance
 
-Berdasarkan penelitian terdahulu (Dewi et al., 2023) dengan YOLOv8, target akurasi adalah:
+Berdasarkan training terakhir (model_metadata.json):
 
-- **Training Accuracy:** >95%
-- **Validation Accuracy:** >90% ✅
-- **Top-3 Accuracy:** >98%
+- **Architecture:** MobileNetV2 + Custom Top Layers
+- **Input Size:** 224x224x3 RGB
+- **Number of Classes:** 21 buah
+- **Model Size:** 3.5 MB (INT8 Quantized)
+- **Preprocessing:** (pixel / 127.5) - 1.0 → [-1, 1]
 
-Model yang sudah ditraining dengan MobileNetV2 + Transfer Learning diharapkan mencapai akurasi **92-94%** pada validation set.
+**Target Akurasi:**
+- Training Accuracy: >95%
+- Validation Accuracy: >90% ✅
+- Top-3 Accuracy: >98%
 
 ---
 
@@ -220,17 +202,37 @@ Model yang sudah ditraining dengan MobileNetV2 + Transfer Learning diharapkan me
 - **Framework:** TensorFlow 2.14 + Keras
 - **Model:** MobileNetV2 (Transfer Learning)
 - **Input Size:** 224x224 RGB
-- **Output:** 15 classes (Softmax)
+- **Output:** 21 classes (Softmax)
 - **Optimization:** INT8 Quantization untuk mobile
 
 ### Android App:
 - **Language:** Kotlin
-- **Build System:** Gradle KTS
-- **UI Framework:** Jetpack Compose
+- **Build System:** Gradle KTS 8.14.3
+- **UI Framework:** Jetpack Compose + Material Design 3
 - **Camera:** CameraX Library
 - **ML Runtime:** TensorFlow Lite
 - **Min SDK:** 24 (Android 7.0)
 - **Target SDK:** 35 (Android 15)
+- **Compile SDK:** 35
+
+### Key Dependencies:
+```kotlin
+// Jetpack Compose
+androidx.compose.bom
+androidx.compose.material3
+androidx.activity.compose
+androidx.navigation.compose
+
+// CameraX
+androidx.camera:camera-core:1.3.4
+androidx.camera:camera-camera2:1.3.4
+androidx.camera:camera-lifecycle:1.3.4
+androidx.camera:camera-view:1.3.4
+
+// TensorFlow Lite
+org.tensorflow:tensorflow-lite:2.14.0
+org.tensorflow:tensorflow-lite-support:0.4.4
+```
 
 ---
 
@@ -252,7 +254,7 @@ Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
 
 1. **Sederhana** - Maksimal 2-3 elemen per screen
 2. **Colorful** - Warna cerah tapi tidak berlebihan
-3. **Readable** - Font minimal 18sp, menggunakan Poppins (double-story 'a')
+3. **Readable** - Font minimal 18sp, menggunakan Inter (double-story 'a')
 4. **Child-Friendly** - Tidak ada teks kompleks atau navigasi rumit
 5. **Educational** - Setiap deteksi disertai fun fact yang menarik
 
@@ -273,14 +275,14 @@ Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
 ```
 
 ### Manual Testing Checklist:
-- [ ] Kamera bisa membuka dengan lancar
-- [ ] Switch camera (depan/belakang) berfungsi
-- [ ] Flash toggle ON/OFF berfungsi
-- [ ] Deteksi real-time smooth (min 15 FPS)
-- [ ] Confidence score akurat (>70% untuk deteksi valid)
-- [ ] Fun fact muncul sesuai buah yang terdeteksi
+- [x] Kamera bisa membuka dengan lancar
+- [x] Switch camera (depan/belakang) berfungsi
+- [x] Flash toggle ON/OFF berfungsi
+- [x] Deteksi real-time smooth (min 15 FPS)
+- [x] Confidence score akurat (>70% untuk deteksi valid)
+- [x] Fun fact muncul sesuai buah yang terdeteksi
 - [ ] Tidak crash saat rotate screen
-- [ ] Permission handling berjalan baik
+- [x] Permission handling berjalan baik
 
 ---
 
@@ -295,17 +297,27 @@ Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
 
 ## 🐛 Known Issues & Solutions
 
-### Issue 1: Dataset Download Gagal
+### Issue 1: Model Tidak Load di Android
 ```
-Error: 403 Forbidden / 401 Unauthorized
-Solution: 
-1. Login ke Kaggle.com
-2. Go to Account > API > Create New Token
-3. Download kaggle.json
-4. Jalankan ulang dataset_preparation.py
+Error: Failed to load model
+Solution:
+1. Pastikan file .tflite ada di app/src/main/assets/
+2. Pastikan filename exact match: fruit_detector_quantized.tflite
+3. Check file tidak corrupt (size ~3.5 MB)
+4. Rebuild project (Build > Clean Project > Rebuild)
 ```
 
-### Issue 2: Out of Memory saat Training
+### Issue 2: Akurasi Rendah pada Real Testing
+```
+Error: Confidence score selalu <50%
+Solution:
+1. Pastikan preprocessing sesuai training: (pixel/127.5)-1.0
+2. Test dengan lighting yang cukup
+3. Test dengan buah yang ada di training set
+4. Pastikan kamera fokus sebelum deteksi
+```
+
+### Issue 3: Out of Memory saat Training
 ```
 Error: ResourceExhaustedError
 Solution:
@@ -314,24 +326,13 @@ Solution:
 3. Close aplikasi lain saat training
 ```
 
-### Issue 3: Model Tidak Load di Android
+### Issue 4: Gradle Sync Failed
 ```
-Error: Failed to load model
+Error: Gradle sync failed
 Solution:
-1. Pastikan file .tflite ada di assets/
-2. Pastikan filename exact match
-3. Check file tidak corrupt (size > 0 bytes)
-4. Rebuild project (Build > Clean Project > Rebuild)
-```
-
-### Issue 4: Akurasi Rendah pada Real Testing
-```
-Error: Confidence score selalu <50%
-Solution:
-1. Pastikan preprocessing sesuai training: (pixel/127.5)-1.0
-2. Test dengan lighting yang cukup
-3. Test dengan buah yang ada di training set
-4. Pastikan kamera fokus sebelum deteksi
+1. Update Gradle wrapper ke 8.14.3
+2. Invalidate Caches & Restart Android Studio
+3. Check internet connection untuk download dependencies
 ```
 
 ---
@@ -371,7 +372,11 @@ Universitas Kristen Satya Wacana
 - [x] Setup project structure
 - [x] Dataset preparation script
 - [x] Model training script
-- [ ] Android app development
+- [x] Android app development (basic structure)
+- [x] TensorFlow Lite integration
+- [x] Camera functionality
+- [x] Real-time detection
+- [x] UI/UX implementation
 - [ ] Testing dengan anak SD
 - [ ] Bug fixing & optimization
 - [ ] Publikasi jurnal nasional terakreditasi
@@ -393,4 +398,4 @@ Jika Anda adalah **AI Agent/Future Developer** yang akan melanjutkan project ini
 
 ---
 
-*Last updated: November 2025*
+*Last updated: November 24, 2025*
