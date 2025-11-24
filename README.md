@@ -35,10 +35,10 @@ Pisang, Rambutan, Salak, Semangka, Strawberry, Tomat
 .
 ├── README.md                      # File ini
 ├── INSTRUCTIONS.md                # Panduan lengkap untuk AI Agent/Developer
-├── dataset_preparation.py         # Script persiapan dataset
-├── train_fruit_model.py          # Script training model
-├── convert_keras_to_tflite.py    # Script konversi model ke TFLite
-├── test_android_model.py         # Script testing model Android
+├── extract_class_names.py        # Script 1: Extract & mapping class names
+├── dataset_preparation.py         # Script 2: Persiapan dataset
+├── train_fruit_model.py          # Script 3: Training model
+├── convert_keras_to_tflite.py    # Script 4: Konversi model ke TFLite
 ├── model_metadata.json           # Metadata model yang sudah trained
 │
 ├── app/                          # Android app code (Kotlin + Jetpack Compose)
@@ -101,10 +101,14 @@ pip install tensorflow numpy matplotlib scikit-learn pillow
 **⚠️ IMPORTANT: Dataset sudah di-download? Lewati download, langsung preparation!**
 
 ```bash
-# STEP 1: Update path di dataset_preparation.py
+# STEP 1: Extract class names dari dataset
+python extract_class_names.py
+# Output: Mapping buah Indonesia ke class names dataset
+
+# STEP 2: Update path di dataset_preparation.py
 # Edit DATASET_PATHS sesuai lokasi dataset Anda
 
-# STEP 2: Run preparation
+# STEP 3: Run preparation
 python dataset_preparation.py
 
 # Script akan:
@@ -149,17 +153,35 @@ python train_fruit_model.py
 ```
 model_output/
 ├── models/
-│   ├── fruit_detector_best.keras
-│   ├── fruit_detector_float32.tflite
-│   ├── fruit_detector_float16.tflite
-│   └── fruit_detector_quantized.tflite  ⭐ (untuk Android)
+│   └── fruit_detector_best.keras
 ├── plots/
 │   ├── training_history_[timestamp].png
 │   └── confusion_matrix_[timestamp].png
 └── model_metadata.json
 ```
 
-### 4️⃣ Setup Android Project
+### 4️⃣ Konversi Model ke TFLite
+
+```bash
+# Konversi model Keras ke TensorFlow Lite
+python convert_keras_to_tflite.py
+
+# Script akan generate 3 versi:
+# - Float32 (full precision)
+# - Float16 (half precision)
+# - INT8 Quantized (untuk Android) ⭐
+```
+
+**Output:**
+```
+model_output/
+└── models/
+    ├── fruit_detector_float32.tflite
+    ├── fruit_detector_float16.tflite
+    └── fruit_detector_quantized.tflite  ⭐ (3.5 MB)
+```
+
+### 5️⃣ Setup Android Project
 
 ```bash
 # Buka Android Studio
