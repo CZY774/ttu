@@ -274,25 +274,6 @@ Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
 ./gradlew connectedAndroidTest
 ```
 
-### Manual Testing Checklist:
-- [x] Kamera bisa membuka dengan lancar
-- [x] Switch camera (depan/belakang) berfungsi
-- [x] Flash toggle ON/OFF berfungsi
-- [x] Deteksi real-time smooth (min 15 FPS)
-- [x] Confidence score akurat (>70% untuk deteksi valid)
-- [x] Fun fact muncul sesuai buah yang terdeteksi
-- [ ] Tidak crash saat rotate screen
-- [x] Permission handling berjalan baik
-
----
-
-## 📚 Referensi
-
-1. **Dewi et al. (2023)** - "Automated Fruit Classification Based on Deep Learning Utilizing Yolov8" - Akurasi 97.5%
-2. **Wibi et al. (2020)** - "Deteksi Buah dengan CNN Berbasis YOLOv3" - Akurasi 70-90%
-3. **Ahmed & Reddy (2021)** - "Mobile-Based System for Plant Disease Detection using Deep Learning"
-4. **Google Documentation** - CameraX, TensorFlow Lite, Jetpack Compose
-
 ---
 
 ## 🐛 Known Issues & Solutions
@@ -337,24 +318,6 @@ Solution:
 
 ---
 
-## 🤝 Contributing
-
-Ini adalah project Tugas Akhir individu, tapi saran dan feedback sangat diterima!
-
-Jika menemukan bug atau punya ide improvement:
-1. Buat Issue di GitHub
-2. Atau kontak langsung via email
-
----
-
-## 📄 License
-
-Project ini dibuat untuk keperluan Tugas Akhir di Universitas Kristen Satya Wacana.
-
-**Dataset:** Fruits-360 dataset by Horea Muresan, Mihai Oltean (moltean/fruits on Kaggle)
-
----
-
 ## 👨‍💻 Author
 
 **Cornelius Ardhani Yoga Pratama**  
@@ -362,39 +325,6 @@ NIM: 672022204
 Program Studi Teknik Informatika  
 Fakultas Teknologi Informasi  
 Universitas Kristen Satya Wacana
-
-**Dosen Pembimbing:** [Nama Dosen]
-
----
-
-## 🎯 Roadmap
-
-- [x] Setup project structure
-- [x] Dataset preparation script
-- [x] Model training script
-- [x] Android app development (basic structure)
-- [x] TensorFlow Lite integration
-- [x] Camera functionality
-- [x] Real-time detection
-- [x] UI/UX implementation
-- [ ] Testing dengan anak SD
-- [ ] Bug fixing & optimization
-- [ ] Publikasi jurnal nasional terakreditasi
-- [ ] Pengajuan HaKI
-
----
-
-## 📞 Support
-
-Jika Anda adalah **AI Agent/Future Developer** yang akan melanjutkan project ini:
-
-1. ✅ Baca **INSTRUCTIONS.md** terlebih dahulu
-2. ✅ Ikuti step-by-step di Quick Start
-3. ✅ Jika ada masalah, check Known Issues section
-4. ✅ Test di real device, bukan emulator
-5. ✅ Keep it simple - ingat target user adalah anak SD!
-
-**Good luck! 🚀🍎🍌**
 
 ---
 
