@@ -15,9 +15,6 @@
 .cxx
 local.properties
 INSTRUCTIONS.md
-dataset_preparation.py
-train_fruit_model.py
-convert_keras_to_tflite.py
 quick_val_test.py
 test_tflite_inference.py
 test_android_model.py
