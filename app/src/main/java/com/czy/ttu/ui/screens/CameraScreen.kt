@@ -19,6 +19,7 @@ import com.czy.ttu.ml.FruitClassifier
 import com.czy.ttu.ui.components.CameraControls
 import com.czy.ttu.ui.components.CameraPreview
 import com.czy.ttu.ui.components.DetectionResultCard
+import com.czy.ttu.ui.components.SuccessAnimation
 
 @Composable
 fun CameraScreen() {
@@ -43,6 +44,7 @@ fun CameraScreen() {
     var flashEnabled by remember { mutableStateOf(false) }
     var detectionResult by remember { mutableStateOf<ClassificationResult?>(null) }
     var lastDetectionTime by remember { mutableLongStateOf(0L) }
+    var showSuccessAnimation by remember { mutableStateOf(false) }
     
     val classifier = remember { FruitClassifier(context) }
     val repository = remember { FruitRepository(context) }
@@ -60,10 +62,11 @@ fun CameraScreen() {
                 flashEnabled = flashEnabled,
                 onImageCaptured = { bitmap ->
                     val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastDetectionTime >= 500) { // Deteksi setiap 500ms
+                    if (currentTime - lastDetectionTime >= 500) {
                         val result = classifier.classify(bitmap)
                         if (result.confidence > 0.7f) {
                             detectionResult = result
+                            showSuccessAnimation = true
                             lastDetectionTime = currentTime
                         }
                     }
@@ -84,6 +87,13 @@ fun CameraScreen() {
                 onToggleFlash = { flashEnabled = !flashEnabled }
             )
             
+            if (showSuccessAnimation) {
+                SuccessAnimation(
+                    modifier = Modifier.align(Alignment.Center),
+                    onAnimationEnd = { showSuccessAnimation = false }
+                )
+            }
+            
             detectionResult?.let { result ->
                 val fruitInfo = repository.getFruitInfo(result.fruitName)
                 DetectionResultCard(
@@ -94,7 +104,6 @@ fun CameraScreen() {
                     fruitInfo = fruitInfo
                 )
                 
-                // Auto-hide setelah 3 detik
                 LaunchedEffect(result) {
                     kotlinx.coroutines.delay(3000)
                     detectionResult = null
