@@ -1,4 +1,4 @@
-# 🍎 TanyaBuah - Aplikasi Deteksi Buah untuk Anak SD
+# 🍎 KenalBuah - Aplikasi Deteksi Buah untuk Anak SD
 
 > **Tugas Akhir 1**  
 > Cornelius Ardhani Yoga Pratama (NIM: 672022204)  
