@@ -68,9 +68,9 @@ Banana, Rambutan, Salak, Watermelon, Strawberry, Tomato
 ├── README.md                      # This file
 ├── INSTRUCTIONS.md                # Complete guide for AI Agent/Developer
 ├── extract_class_names.py        # Script 1: Extract & mapping class names
-├── dataset_preparation.py         # Script 2: Persiapan dataset
+├── dataset_preparation.py         # Script 2: Dataset preparation
 ├── train_fruit_model.py          # Script 3: Training model
-├── convert_keras_to_tflite.py    # Script 4: Konversi model ke TFLite
+├── convert_keras_to_tflite.py    # Script 4: Convert model to TFLite
 ├── model_metadata.json           # Trained model metadata
 │
 ├── app/                          # Android app code (Kotlin + Jetpack Compose)
@@ -103,15 +103,15 @@ Banana, Rambutan, Salak, Watermelon, Strawberry, Tomato
 │   └── build.gradle.kts
 │
 └── [Dataset folders - not included in repo]
-    ├── fruit-dataset-full-varieties/  # Dataset hasil preparation
-    └── model_output/                  # Hasil training
+    ├── fruit-dataset-full-varieties/  # Dataset preparation results
+    └── model_output/                  # Training results
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1️⃣ Setup Environment (Python untuk Training)
+### 1️⃣ Setup Environment (Python for Training)
 
 ```bash
 # Clone repository
@@ -130,25 +130,25 @@ pip install tensorflow numpy matplotlib scikit-learn pillow
 
 ### 2️⃣ Dataset Preparation
 
-**⚠️ IMPORTANT: Dataset sudah di-download? Lewati download, langsung preparation!**
+**⚠️ IMPORTANT: Has the dataset been downloaded? Skip the download, get straight to preparation!**
 
 ```bash
-# STEP 1: Extract class names dari dataset
+# STEP 1: Extract class names from the dataset
 python extract_class_names.py
-# Output: Mapping buah Indonesia ke class names dataset
+# Output: Mapping Indonesian fruits to dataset class names
 
-# STEP 2: Update path di dataset_preparation.py
-# Edit DATASET_PATHS sesuai lokasi dataset Anda
+# STEP 2: Update the path in dataset_preparation.py
+# Edit DATASET_PATHS according to your dataset location
 
 # STEP 3: Run preparation
 python dataset_preparation.py
 
-# Script akan:
-# ✅ Check dataset lokal (TIDAK download ulang)
-# ✅ Filter 21 buah yang relevan
-# ✅ Reorganisasi dan rename ke Bahasa Indonesia
-# ✅ Balance dataset (250 gambar per class)
-# ✅ Generate class_names.json dan fruit_info.json
+# The script will:
+# ✅ Check the local dataset (NOT re-download)
+# ✅ Filter 21 relevant fruits
+# ✅ Reorganize and rename to Indonesian
+# ✅ Balance the dataset (250 images per class)
+# ✅ Generate class_names.json and fruit_info.json
 ```
 
 **Output:**
@@ -169,16 +169,16 @@ fruit-dataset-full-varieties/
 ### 3️⃣ Model Training
 
 ```bash
-# Run training (bisa pakai Google Colab untuk GPU gratis)
+# Run training (you can use Google or Kaggle Colab for free GPUs)
 python train_fruit_model.py
 
-# Training akan berjalan ~30-45 menit dengan GPU
-# ~2-3 jam dengan CPU
+# Training will take ~30-45 minutes on a GPU
+# ~2-3 hours on a CPU
 
-# Di tengah proses, Anda akan ditanya:
+# During the process, you will be asked:
 # "Fine-tune model? (Y/n):"
-# - Ketik Y untuk akurasi lebih tinggi (lebih lama)
-# - Ketik n untuk skip fine-tuning
+# - Type Y for higher accuracy (longer)
+# - Type n to skip fine-tuning
 ```
 
 **Output:**
@@ -195,13 +195,13 @@ model_output/
 ### 4️⃣ Convert Model to TFLite
 
 ```bash
-# Konversi model Keras ke TensorFlow Lite
+# Convert Keras model to TensorFlow Lite
 python convert_keras_to_tflite.py
 
-# Script akan generate 3 versi:
+# The script will generate 3 versions:
 # - Float32 (full precision)
 # - Float16 (half precision)
-# - INT8 Quantized (untuk Android) ⭐
+# - INT8 Quantized (for Android) ⭐
 ```
 
 **Output:**
@@ -216,10 +216,10 @@ model_output/
 ### 5️⃣ Android Project Setup
 
 ```bash
-# Buka Android Studio
-File > Open > pilih folder project root (TTU)
+# Open Android Studio
+File > Open > select the project root folder (TTU)
 
-# Model sudah ada di app/src/main/assets/:
+# The model already exists in app/src/main/assets/:
 # ✅ fruit_detector_quantized.tflite (3.5 MB)
 # ✅ class_names.json
 # ✅ fruit_info.json
@@ -227,8 +227,8 @@ File > Open > pilih folder project root (TTU)
 # Sync Gradle
 # Build > Make Project
 
-# Run di device atau emulator
-# ⚠️ Untuk testing akurat, gunakan REAL DEVICE (bukan emulator)
+# Run on a device or emulator
+# ⚠️ For accurate testing, use a REAL DEVICE (not a emulators)
 ```
 
 ---
@@ -243,7 +243,7 @@ Based on last training (model_metadata.json):
 - **Model Size:** 3.5 MB (INT8 Quantized)
 - **Preprocessing:** (pixel / 127.5) - 1.0 → [-1, 1]
 
-**Target Akurasi:**
+**Target Accuracy:**
 - Training Accuracy: >95%
 - Validation Accuracy: >90% ✅
 - Top-3 Accuracy: >98%
@@ -257,7 +257,7 @@ Based on last training (model_metadata.json):
 - **Model:** MobileNetV2 (Transfer Learning)
 - **Input Size:** 224x224 RGB
 - **Output:** 21 classes (Softmax)
-- **Optimization:** INT8 Quantization untuk mobile
+- **Optimization:** INT8 Quantization for mobile
 
 ### Android App:
 - **Language:** Kotlin
@@ -291,27 +291,27 @@ implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
 
 ---
 
-## 📖 Dokumentasi Lengkap
+## 📖 Documentation Complete
 
-Lihat **`INSTRUCTIONS.md`** untuk:
-- Setup detail Android project
-- Penjelasan arsitektur aplikasi
-- Code snippets lengkap
+See **`INSTRUCTIONS.md`** for:
+- Detailed Android project setup
+- Application architecture explanation
+- Complete code snippets
 - Troubleshooting guide
 - Testing checklist
-- Tips untuk development
+- Development tips
 
 ---
 
 ## 🎨 Design Principles
 
-Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
+This application is specifically designed for elementary school children with the following principles:
 
-1. **Sederhana** - Maksimal 2-3 elemen per screen
-2. **Colorful** - Warna cerah tapi tidak berlebihan
-3. **Readable** - Font minimal 18sp, menggunakan Inter (double-story 'a')
-4. **Child-Friendly** - Tidak ada teks kompleks atau navigasi rumit
-5. **Educational** - Setiap deteksi disertai fun fact yang menarik
+1. **Simple** - Maximum 2-3 elements per screen
+2. **Colorful** - Bright but not excessive colors
+3. **Readable** - Minimum 18sp font, using Inter (double-story 'a')
+4. **Child-Friendly** - No complex text or complicated navigation
+5. **Educational** - Each detection is accompanied by an interesting fun fact
 
 ---
 
@@ -333,42 +333,42 @@ Aplikasi ini dirancang khusus untuk anak Sekolah Dasar dengan prinsip:
 
 ## 🐛 Known Issues & Solutions
 
-### Issue 1: Model Tidak Load di Android
+### Issue 1: Model Not Loading on Android
 ```
 Error: Failed to load model
 Solution:
-1. Pastikan file .tflite ada di app/src/main/assets/
-2. Pastikan filename exact match: fruit_detector_quantized.tflite
-3. Check file tidak corrupt (size ~3.5 MB)
-4. Rebuild project (Build > Clean Project > Rebuild)
+1. Ensure the .tflite file is in app/src/main/assets/
+2. Ensure the filename exactly matches: fruit_detector_quantized.tflite
+3. Check the file is not corrupted (size ~3.5 MB)
+4. Rebuild the project (Build > Clean Project > Rebuild)
 ```
 
-### Issue 2: Akurasi Rendah pada Real Testing
+### Issue 2: Low Accuracy in Real-Time Testing
 ```
-Error: Confidence score selalu <50%
+Error: Confidence score always <50%
 Solution:
-1. Pastikan preprocessing sesuai training: (pixel/127.5)-1.0
-2. Test dengan lighting yang cukup
-3. Test dengan buah yang ada di training set
-4. Pastikan kamera fokus sebelum deteksi
+1. Ensure preprocessing matches training: (pixel/127.5)-1.0
+2. Test with sufficient lighting
+3. Test with fruit from the training set
+4. Ensure the camera is in focus before detection
 ```
 
-### Issue 3: Out of Memory saat Training
+### Issue 3: Out of Memory during Training
 ```
 Error: ResourceExhaustedError
 Solution:
-1. Reduce BATCH_SIZE dari 32 ke 16 atau 8
-2. Gunakan Google Colab dengan GPU
-3. Close aplikasi lain saat training
+1. Reduce BATCH_SIZE from 32 to 16 or 8
+2. Use Google Colab with GPU
+3. Close other applications during training
 ```
 
 ### Issue 4: Gradle Sync Failed
 ```
 Error: Gradle sync failed
 Solution:
-1. Update Gradle wrapper ke 8.14.3
+1. Update Gradle wrapper to 8.14.3
 2. Invalidate Caches & Restart Android Studio
-3. Check internet connection untuk download dependencies
+3. Check internet connection to download dependencies
 ```
 
 ---
