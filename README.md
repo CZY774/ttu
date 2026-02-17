@@ -1,45 +1,77 @@
-# 🍎 TanyaBuah - Aplikasi Deteksi Buah untuk Anak SD
+---
 
-> **Tugas Akhir 1**  
-> Cornelius Ardhani Yoga Pratama (NIM: 672022204)  
-> Program Studi Teknik Informatika  
-> Universitas Kristen Satya Wacana
+# 🍎 TanyaBuah - Fruit Detection App for Elementary Students
+
+Educational Android application designed for elementary students, featuring real-time fruit recognition powered by MobileNetV2 deep learning model.
+
+<div align="center">
+
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpack-compose&logoColor=white)
+
+</div>
 
 ---
 
-## 📱 Tentang Aplikasi
+## 📜 Intellectual Property Rights
 
-Aplikasi Android edukasi yang dapat mendeteksi 21 jenis buah-buahan secara real-time menggunakan kamera dan teknologi Image Detection berbasis Machine Learning (TensorFlow Lite).
+This application is **officially registered** with the **Directorate General of Intellectual Property (DGIP)**, Ministry of Law and Human Rights, Republic of Indonesia.
 
-### ✨ Fitur Utama:
-- ✅ Deteksi buah real-time menggunakan kamera
-- ✅ Switch kamera depan/belakang
+### Registration Details:
+- **Registration Number:** 001138316
+- **Registration Date:** February 3, 2026
+- **Title:** TanyaBuah
+- **Type:** Computer Program (Mobile Application)
+- **Protection Period:** 50 years from first publication
+- **Creators:** Cornelius Ardhani Yoga Pratama & Pratyaksa Ocsa Nugraha Saian
+
+### Protected Elements:
+- Source code and implementation
+- UI/UX design and user interface
+- Machine learning model integration
+- Educational content and methodology
+- Application concept and workflow
+
+### Verification:
+Certificate verification available upon request for recruitment or licensing purposes.
+
+---
+
+## 📱 About the Application
+
+Educational Android application that can detect 21 types of fruits in real-time using camera and Image Detection technology based on Machine Learning (TensorFlow Lite).
+
+### ✨ Main Features:
+- ✅ Real-time fruit detection using camera
+- ✅ Front/back camera switch
 - ✅ Toggle flash ON/OFF
-- ✅ Menampilkan nama buah + confidence score
-- ✅ Fun facts edukatif tentang setiap buah
-- ✅ UI sederhana dan ramah anak
+- ✅ Display fruit name + confidence score
+- ✅ Educational fun facts about each fruit
+- ✅ Simple and child-friendly UI
 
-### 🍓 Buah yang Dapat Dideteksi (21 jenis):
+### 🍓 Detectable Fruits (21 types):
 ```
-Alpukat, Anggur, Apel, Belimbing, Durian,
-Jambu, Jeruk, Kelapa, Kelengkeng, Mangga,
-Manggis, Melon, Nanas, Pepaya, Pir,
-Pisang, Rambutan, Salak, Semangka, Strawberry, Tomat
+Avocado, Grape, Apple, Starfruit, Durian,
+Guava, Orange, Coconut, Longan, Mango,
+Mangosteen, Melon, Pineapple, Papaya, Pear,
+Banana, Rambutan, Salak, Watermelon, Strawberry, Tomato
 ```
 
 ---
 
-## 🗂️ Struktur Repository
+## 🗂️ Repository Structure
 
 ```
 .
-├── README.md                      # File ini
-├── INSTRUCTIONS.md                # Panduan lengkap untuk AI Agent/Developer
+├── README.md                      # This file
+├── INSTRUCTIONS.md                # Complete guide for AI Agent/Developer
 ├── extract_class_names.py        # Script 1: Extract & mapping class names
 ├── dataset_preparation.py         # Script 2: Persiapan dataset
 ├── train_fruit_model.py          # Script 3: Training model
 ├── convert_keras_to_tflite.py    # Script 4: Konversi model ke TFLite
-├── model_metadata.json           # Metadata model yang sudah trained
+├── model_metadata.json           # Trained model metadata
 │
 ├── app/                          # Android app code (Kotlin + Jetpack Compose)
 │   ├── src/main/
@@ -96,7 +128,7 @@ venv\Scripts\activate  # Windows
 pip install tensorflow numpy matplotlib scikit-learn pillow
 ```
 
-### 2️⃣ Persiapan Dataset
+### 2️⃣ Dataset Preparation
 
 **⚠️ IMPORTANT: Dataset sudah di-download? Lewati download, langsung preparation!**
 
@@ -134,7 +166,7 @@ fruit-dataset-full-varieties/
 └── fruit_info.json
 ```
 
-### 3️⃣ Training Model
+### 3️⃣ Model Training
 
 ```bash
 # Run training (bisa pakai Google Colab untuk GPU gratis)
@@ -160,7 +192,7 @@ model_output/
 └── model_metadata.json
 ```
 
-### 4️⃣ Konversi Model ke TFLite
+### 4️⃣ Convert Model to TFLite
 
 ```bash
 # Konversi model Keras ke TensorFlow Lite
@@ -181,7 +213,7 @@ model_output/
     └── fruit_detector_quantized.tflite  ⭐ (3.5 MB)
 ```
 
-### 5️⃣ Setup Android Project
+### 5️⃣ Android Project Setup
 
 ```bash
 # Buka Android Studio
@@ -203,7 +235,7 @@ File > Open > pilih folder project root (TTU)
 
 ## 📊 Model Performance
 
-Berdasarkan training terakhir (model_metadata.json):
+Based on last training (model_metadata.json):
 
 - **Architecture:** MobileNetV2 + Custom Top Layers
 - **Input Size:** 224x224x3 RGB
@@ -352,3 +384,60 @@ Universitas Kristen Satya Wacana
 ---
 
 *Last updated: November 24, 2025*
+
+
+---
+
+## 📄 License
+
+**Copyright © 2024-2026 Cornelius Ardhani Yoga Pratama & Pratyaksa Ocsa Nugraha Saian**  
+**All Rights Reserved.**
+
+This code is made available for **portfolio review and educational reference only**.
+
+### ✅ Permitted Use:
+- View code for learning purposes
+- Review for recruitment/hiring evaluation
+- Reference architecture patterns for educational purposes
+
+### ❌ Prohibited Use:
+- Commercial use or redistribution
+- Copying or forking for production use
+- Removing copyright notices
+- Claiming as original work
+- Registering for Intellectual Property Rights
+
+**This project is protected by Indonesian copyright law (UU No. 28 Tahun 2014 tentang Hak Cipta).**
+
+---
+
+## 👨💻 Developers
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/CZY774">
+        <img src="https://github.com/CZY774.png" width="100px;" alt="Cornelius Yoga"/>
+        <br />
+        <sub><b>Cornelius Ardhani Yoga Pratama</b></sub>
+      </a>
+      <br />
+      <a href="https://corneliusyoga.vercel.app">Portfolio</a> •
+      <a href="https://linkedin.com/in/cornelius-yoga-783b6a291">LinkedIn</a>
+    </td>
+    <td align="center">
+      <sub><b>Pratyaksa Ocsa Nugraha Saian</b></sub>
+      <br />
+      Co-Creator
+    </td>
+  </tr>
+</table>
+
+---
+
+<div align="center">
+
+**Note for Recruiters:**  
+This project demonstrates mobile development, machine learning integration, and educational software design capabilities. Full documentation and additional project details available upon request.
+
+</div>
